@@ -18,7 +18,7 @@ class Game:
                 if our_event.type == pygame.QUIT:
                     finished = True
                 else:
-                    pass #FIXME: self.level выбирается на пользовательском интерфейсе
+                    pass # FIXME: self.level выбирается на пользовательском интерфейсе
             vis.draw_background(screen, self.level, self.towers)
             pygame.display.update()
             clock.tick(30)
