@@ -14,9 +14,12 @@ class Tower:
         self.charged_time = 0
 
     def check_cause(self):
+        closest_enemy = None
+        self.charged_time += 1  # reloading
         if self.cause == "always_ready":
             self.ready_for_action = True
         elif self.cause == "enemy_in_range":
+            closest_enemy = Warrior
             pass  # FIXME
         elif self.cause == "ground_enemy_in_range":
             pass
@@ -24,12 +27,9 @@ class Tower:
         if self.charged_time >= self.reload_time and self.ready_for_action:
             self.charged_time = 0
             self.ready_for_action = False
-            self.action()
+            self.action(closest_enemy)
 
-    def reload(self):
-        self.charged_time += 1
-
-    def action(self):
+    def action(self, potential_closest_enemy_or_some_other_variable_from_checker):
         pass
 
 
@@ -40,8 +40,9 @@ class ArrowTower(Tower):
         self.range = 100
         self.reload_time = 10
 
-    def action(self):
-        pass
+    def action(self, closest_enemy):
+        closest_enemy.projectiles.append(
+            BallisticBullet("arrow", self.x, self.y))  # FIXME координаты вылета пули != x y, а зависят от них
 
 
 class GunTower(Tower):
@@ -61,7 +62,8 @@ class BombTower(Tower):
 
 
 class BallisticBullet:
-    pass
+    def __init__(self, sprite, x, y):
+        pass
 
 
 class StraightBullet:
@@ -70,9 +72,15 @@ class StraightBullet:
 
 class Warrior:
     def __init__(self):
+        """
+        Инициализация класса Warrior (все живые существа, способные стоять на карте).
+        У каждого есть показатели здоровья, урона и скорости, а также прикреплённый к ним список летящих в него в
+        данный момент снарядов, перемещающихся вместе с ними
+        """
         self.hp = 0
         self.dmg = 0
         self.speed = 0
+        self.projectiles = []
 
 
 class Opponent(Warrior):

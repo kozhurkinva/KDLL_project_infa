@@ -10,7 +10,8 @@ class Game:
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         clock = pygame.time.Clock()
         self.level = 0
-        self.towers = [0] * 999
+        self.tower_types = [0] * 999
+        self.towers = []
 
         finished = False
         while not finished:
@@ -21,7 +22,9 @@ class Game:
                     pass
                 else:
                     pass  # FIXME: self.level выбирается на пользовательском интерфейсе
-            vis.draw_background(screen, self.level, self.towers)
+            vis.draw_background(screen, self.level, self.tower_types)
+            for elem in self.towers:
+                elem.check_cause()
             pygame.display.update()
             clock.tick(30)
         pygame.quit()
