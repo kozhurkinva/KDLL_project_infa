@@ -51,6 +51,18 @@ while not finished:
     pygame.display.update()
     clock.tick(30)
 
+image = pygame.surface.Surface((g_c.WIDTH, g_c.HEIGHT), pygame.SRCALPHA)
+color = list(map(int, input('цвет: ').split()))
+width = int(input('ширина: '))
+for i in range(len(move_trajectory) - 1):
+    pygame.draw.line(image, color,
+                     ((move_trajectory[i][0] + 0.5) * rect_size[0],
+                      (move_trajectory[i][1] + 0.5) * rect_size[1]),
+                     ((move_trajectory[i + 1][0] + 0.5) * rect_size[0],
+                      (move_trajectory[i + 1][1] + 0.5) * rect_size[1]), width)
+pygame.image.save(image, 'maps/new/image_' + file_name[0:-4] + '.png')
+
+
 # перенос данных из массива координат в двухмерный конечный массив
 if len(move_trajectory) >= 2:
     for i in range(len(move_trajectory[0:-1])):
@@ -70,4 +82,4 @@ with open('maps/new/' + file_name, 'w') as file:
         for an in line:
             file.write(str(an) + ' ')
         file.write('\n')
-pygame.image.save(screen, 'maps/new/' + file_name + '_plan.png')
+pygame.image.save(screen, 'maps/new/' + file_name + '_plan.png') # FIXME нужно сохранять этот файл?
