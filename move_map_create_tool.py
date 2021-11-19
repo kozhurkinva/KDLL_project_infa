@@ -6,6 +6,7 @@ pygame.init()
 clock = pygame.time.Clock()
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 # ввод
 size = list(map(int, input('размер в клетках в формате AxB: ').split('x')))
@@ -32,7 +33,7 @@ while not finished:
         pygame.draw.line(screen, BLACK, (0, j * rect_size[1]), (g_c.WIDTH, j * rect_size[1]))
     if len(move_trajectory) >= 2:
         for i in range(len(move_trajectory) - 1):
-            pygame.draw.line(screen, BLACK,
+            pygame.draw.line(screen, RED,
                              ((move_trajectory[i][0] + 0.5) * rect_size[0],
                               (move_trajectory[i][1] + 0.5) * rect_size[1]),
                              ((move_trajectory[i + 1][0] + 0.5) * rect_size[0],
@@ -69,3 +70,4 @@ with open('maps/new/' + file_name, 'w') as file:
         for an in line:
             file.write(str(an) + ' ')
         file.write('\n')
+pygame.image.save(screen, 'maps/new/' + file_name + '_plan.png')

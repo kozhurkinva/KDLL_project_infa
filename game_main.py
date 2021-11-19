@@ -17,8 +17,10 @@ class Game:
             for our_event in pygame.event.get():
                 if our_event.type == pygame.QUIT:
                     finished = True
+                elif our_event.type == pygame.MOUSEBUTTONDOWN:
+                    pass
                 else:
-                    pass # FIXME: self.level выбирается на пользовательском интерфейсе
+                    pass  # FIXME: self.level выбирается на пользовательском интерфейсе
             vis.draw_background(screen, self.level, self.towers)
             pygame.display.update()
             clock.tick(30)
