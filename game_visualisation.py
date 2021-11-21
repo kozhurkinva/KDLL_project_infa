@@ -17,6 +17,7 @@ def draw_background(screen, level, towers):
             x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
             background_img.blit(tower_spot_img, (x, y))
 
+
 def get_level_image():
     pass
 
