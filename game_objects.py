@@ -139,7 +139,7 @@ class Opponent(Warrior):
             file = 'maps/now/' + str(map_types[k].__name__) + self.group + '_move_map.txt'
         with open(file) as map_file:
             MAP = []
-            for i in (map_file.read()).split('\n'):
+            for i in ((map_file.read()).split('\n'))[1:]:
                 MAP += i.split()
         if self.x == '-':
             self.x = MAP[-1][0]
