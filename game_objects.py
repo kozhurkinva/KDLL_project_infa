@@ -100,6 +100,8 @@ class BombTower(Tower):
 
 class BallisticBullet:
     def __init__(self, sprite, x, y):
+        """Инициализация класса BallisticBullet - пули, летящие по баллистической траектории из точки (x,y)
+        в соответствующее существо"""
         pass
 
 
@@ -128,7 +130,7 @@ class Opponent(Warrior):
         self.x = '-'
         self.y = '-'
         self.group = group
-        # self.distance = 0  #  FIXME self.distance достаётся из файла
+        self.distance = "-"
 
     def move_opponent(self):
         map_types = type(self).__mro__
@@ -144,7 +146,10 @@ class Opponent(Warrior):
         if self.x == '-':
             self.x = MAP[-1][0]
             self.y = MAP[-1][1]
+        if self.distance == "-":
+            self.distance = float(MAP[0][0])
         self.move(MAP[int(self.x / g_c.WIDTH * len(MAP[0]))][int(self.y / g_c.HEIGHT * (len(MAP) - 1))])
+        self.distance -= self.speed
 
     def move(self, an='-'):
         if an == 'stop':
