@@ -37,6 +37,7 @@ class Level:
             if tower.is_pressed(self.screen):
                 tower.image = self.images[1]
 
+
 # def draw_map(screen, level, towers):
 #     """Рисует задний фон и места башни/места под башни
 #     screen - окно для рисования

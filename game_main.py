@@ -37,6 +37,7 @@ class Game:
                 else:
                     cur_level.draw()
 
+
             for our_event in pygame.event.get():
                 if our_event.type == pygame.QUIT:
                     finished = True
