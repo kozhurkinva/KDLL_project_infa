@@ -76,10 +76,13 @@ class ArrowTower(Tower):
         self.cost = 10
         self.range = 100
         self.reload_time = 10
+        self.dmg = 2
 
     def action(self, closest_enemy):
         closest_enemy.projectiles.append(
-            BallisticBullet("arrow", self.x, self.y))  # FIXME координаты вылета пули != x y, а зависят от них
+            BallisticBullet("arrow", self.dmg, self.x, self.y, 2,
+                            closest_enemy,
+                            1 / 6))  # FIXME координаты вылета пули != x y, а зависят от них, скорость и ускорение - ???
 
 
 class GunTower(Tower):
@@ -99,7 +102,36 @@ class BombTower(Tower):
 
 
 class BallisticBullet:
-    def __init__(self, sprite, x, y):
+    def __init__(self, sprite, dmg, x, y, bullet_speed, shot_creature, gravity_acceleration):
+        """Инициализация класса BallisticBullet - пули, летящие по баллистической траектории из точки (x,y)
+        в соответствующее существо shot_creature. bullet_speed - её скорость по оси x"""
+        self.shot_creature = shot_creature
+        self.dmg = dmg
+        self.x = x
+        self.y = y
+        self.a = gravity_acceleration
+        self.sprite = sprite
+        dx = x - shot_creature.x
+        dy = y - shot_creature.y
+        self.time_of_flight = (dx ** 2 + dy ** 2) ** (1 / 2) / bullet_speed
+        self.vx = dx / self.time_of_flight
+        self.vy = (dy + self.a * self.time_of_flight ** 2 / 2) / self.time_of_flight
+
+    def move(self):
+        """
+        Перемещает пулю по её собственной баллистической траектории + по траектории движения того, в кого стреляют,
+        проверяет факт попадания (прошествия времени time_of_flight)
+        """
+        self.time_of_flight -= 1
+        self.x += self.vx + self.shot_creature.vx
+        self.y += self.vy + self.shot_creature.vy
+        self.vy -= self.a
+        if self.time_of_flight <= 0:
+            self.shot_creature.projectiles.pop(self.shot_creature.projectiles.index(self))
+            self.shot_creature.take_damage(self.dmg)
+
+    def draw(self):
+        """ Рисует пулю в полёте """
         pass
 
 
@@ -107,10 +139,10 @@ class StraightBullet:
     pass
 
 
-class Warrior:
+class Creature:
     def __init__(self):
         """
-        Инициализация класса Warrior (все живые существа, способные стоять на карте).
+        Инициализация класса Creature (все живые существа, способные стоять на карте).
         У каждого есть показатели здоровья, урона и скорости, соответствующая им типизация,
         а также прикреплённый к ним список летящих в него в данный момент снарядов, перемещающихся вместе с ними
         """
@@ -120,15 +152,26 @@ class Warrior:
         self.types = []
         self.projectiles = []
 
+    def take_damage(self, dmg):
+        """
+        Функция получения существом урона в количестве dmg. В случае нехватки очков жизни вызывает смерть существа.
+        """
+        self.hp -= dmg
+        if self.hp <= 0:
+            self.die()
 
-class Opponent(Warrior):
+    def die(self):
+        pass
+
+
+class Opponent(Creature):
     def __init__(self, group='alpha'):
         super().__init__()
         self.move_an = '-'
         self.x = '-'
         self.y = '-'
         self.group = group
-        # self.distance = 0  #  FIXME self.distance достаётся из файла
+        self.distance = "-"
 
     def move_opponent(self):
         map_types = type(self).__mro__
@@ -144,7 +187,10 @@ class Opponent(Warrior):
         if self.x == '-':
             self.x = MAP[-1][0]
             self.y = MAP[-1][1]
+        if self.distance == "-":
+            self.distance = float(MAP[0][0])
         self.move(MAP[int(self.x / g_c.WIDTH * len(MAP[0]))][int(self.y / g_c.HEIGHT * (len(MAP) - 1))])
+        self.distance -= self.speed
 
     def move(self, an='-'):
         if an == 'stop':
@@ -154,3 +200,11 @@ class Opponent(Warrior):
             self.move_an = float(an)
         self.x += self.speed * math.cos(self.move_an)
         self.y += self.speed * math.sin(self.move_an)
+
+
+class Warrior(Opponent):
+    def __init__(self):
+        super().__init__()
+        self.hp = 10
+        self.dmg = 1
+        self.speed = 1
