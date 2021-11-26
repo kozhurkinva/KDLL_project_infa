@@ -2,25 +2,68 @@ import pygame
 from game_constants import *
 
 
-def draw_background(screen, level, towers):
+class Level:
     """Рисует задний фон и места башни/места под башни
     screen - окно для рисования
     level - номер уровня
     towers - список с номерами, обозначающими виды башен
     """
-    background_img = pygame.image.load("Textures/Background" + str(level) + ".png").convert_alpha()
-    screen.blit(background_img, (0, 0))
-    tower_spot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
-    with open("level_designs.txt", "r") as level_design:
-        design = level_design.readlines()[level].split()
-        for i in range(int(design[1])):
-            x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-            background_img.blit(tower_spot_img, (x, y))
+    def __init__(self, level, screen):
+        self.level = level
+        self.screen = screen
 
+        self.ingame_towers = []
 
-def get_level_image():
-    pass
+        self.background_img = pygame.image.load("Textures/Background" + str(self.level) + ".png").convert_alpha()
+        self.screen.blit(self.background_img, (0, 0))
 
+        self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
+        self.towerspot_rect = self.towerspot_img.get_rect()
+
+        self.archertower_img = pygame.image.load("Textures/ArcherTower.png").convert_alpha()
+        self.archertower_rect = self.archertower_img.get_rect()
+
+        self.images = [self.towerspot_img, self.archertower_img]
+
+        with open("level_designs.txt", "r") as level_design:
+            design = level_design.readlines()[level].split()
+            for i in range(int(design[1])):
+                x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
+                click = Button(x, y, self.images[0], 1)
+                self.ingame_towers.append(click)
+
+    def draw(self):
+        for tower in self.ingame_towers:
+            if tower.is_pressed(self.screen):
+                tower.image = self.images[1]
+
+# def draw_map(screen, level, towers):
+#     """Рисует задний фон и места башни/места под башни
+#     screen - окно для рисования
+#     level - номер уровня
+#     towers - список с номерами, обозначающими виды башен
+#     """
+#     towers_pos = []
+#
+#     background_img = pygame.image.load("Textures/Background" + str(level) + ".png").convert_alpha()
+#     screen.blit(background_img, (0, 0))
+#
+#     towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
+#     towerspot_rect = towerspot_img.get_rect()
+#
+#     archertower_img = pygame.image.load("Textures/ArcherTower.png").convert_alpha()
+#     archertower_rect = archertower_img.get_rect()
+#
+#     images = [towerspot_img, archertower_img]
+#
+#     with open("level_designs.txt", "r") as level_design:
+#         design = level_design.readlines()[level].split()
+#         for i in range(int(design[1])):
+#             x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
+#             towers_pos.append([x, y])
+#
+#     for tower in towers_pos:
+#         screen.blit(images[towers[i]], tower)
 
 # button class
 class Button:
@@ -47,3 +90,5 @@ class Button:
         surface.blit(self.image, (self.rect.x, self.rect.y))
 
         return action
+
+
