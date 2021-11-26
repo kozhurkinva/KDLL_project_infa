@@ -189,7 +189,7 @@ class Opponent(Creature):
             self.y = MAP[-1][1]
         if self.distance == "-":
             self.distance = float(MAP[0][0])
-        self.move(MAP[int(self.x / g_c.WIDTH * len(MAP[0]))][int(self.y / g_c.HEIGHT * (len(MAP) - 1))])
+        self.move(MAP[int(self.x / g_c.WIDTH * len(MAP[1]))][int(self.y / g_c.HEIGHT * (len(MAP) - 1))])
         self.distance -= self.speed
 
     def move(self, an='-'):
@@ -197,7 +197,14 @@ class Opponent(Creature):
             pass
             # FIXME тут ГГ должен получить урон, + self.death()
         elif an != '-':
-            self.move_an = float(an)
+            x = float(an.split(";")[0])
+            y = float(an.split(";")[1])
+            dx = self.x - x
+            dy = self.y - y
+            if dx != 0:
+                self.move_an = math.atan(dy / dx) + math.pi / 2 * int(dx < 0)
+            else:
+                self.move_an = math.pi / 2 * (int(dy > 0) - int(dy < 0))
         self.x += self.speed * math.cos(self.move_an)
         self.y += self.speed * math.sin(self.move_an)
 

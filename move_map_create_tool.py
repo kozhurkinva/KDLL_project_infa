@@ -71,12 +71,7 @@ if len(move_trajectory) >= 2:
     for i in range(len(move_trajectory[0:-1])):
         x = move_trajectory[i][0]
         y = move_trajectory[i][1]
-        dx = move_trajectory[i + 1][0] - x
-        dy = move_trajectory[i + 1][1] - y
-        if dx != 0:
-            map_info[y][x] = math.atan(dy / dx) + math.pi / 2 * int(dx < 0)
-        else:
-            map_info[y][x] = math.pi / 2 * (int(dy > 0) - int(dy < 0))
+        map_info[y][x] = str((x + 0.5) * rect_size[0]) + ";" + str((y + 0.5) * rect_size[1])
 map_info[move_trajectory[-1][1]][move_trajectory[-1][0]] = "stop"
 map_info += [move_trajectory[0]]
 # сохранение данных
