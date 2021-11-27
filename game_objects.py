@@ -183,14 +183,14 @@ class Opponent(Creature):
         with open(file) as map_file:
             map_file_lines = (map_file.read()).split("\n")
             if self.distance == "-":
-                self.distance = map_file_lines[0][0]
+                self.distance = float(map_file_lines[0][0])
             level_map = []
-            for i in map_file_lines[1:]:
-                level_map += i.split()
+            for i in map_file_lines[1:-1]:
+                level_map += [i.split()]
         if self.x == "-":
             self.x = float(level_map[-1][0])
             self.y = float(level_map[-1][1])
-        self.move(level_map[int(self.x / g_c.WIDTH * len(level_map[1]))][int(self.y / g_c.HEIGHT * (len(level_map) - 1))])
+        self.move(level_map[int(self.x / g_c.WIDTH * (len(level_map) - 1))][int(self.y / g_c.HEIGHT * len(level_map[1]))])
         self.distance -= self.speed
 
     def move(self, an="-"):

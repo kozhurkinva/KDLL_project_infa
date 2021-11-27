@@ -73,7 +73,7 @@ if len(move_trajectory) >= 2:
         y = move_trajectory[i][1]
         map_info[y][x] = str((x + 0.5) * rect_size[0]) + ";" + str((y + 0.5) * rect_size[1])
 map_info[move_trajectory[-1][1]][move_trajectory[-1][0]] = "stop"
-map_info += [move_trajectory[0]]
+map_info += [[(move_trajectory[0][1] + 0.5) * rect_size[0], (move_trajectory[0][0] + 0.5) * rect_size[1]]]
 # сохранение данных
 with open("maps/new/" + file_name, "w") as file:
     file.write(str(trajectory_length) + " ")
