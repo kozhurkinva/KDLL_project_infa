@@ -165,38 +165,39 @@ class Creature:
 
 
 class Opponent(Creature):
-    def __init__(self, group='alpha'):
+    def __init__(self, group="alpha"):
         super().__init__()
-        self.move_an = '-'
-        self.x = '-'
-        self.y = '-'
+        self.move_an = "-"
+        self.x = "-"
+        self.y = "-"
         self.group = group
         self.distance = "-"
 
     def move_opponent(self):
         map_types = type(self).__mro__
         k = 0
-        file = 'maps/now/' + str(map_types[0].__name__) + self.group + '_move_map.txt'
+        file = "maps/now/" + str(map_types[0].__name__) + "_" + self.group + "_move_map.txt"
         while not path.exists(file):
             k += 1
-            file = 'maps/now/' + str(map_types[k].__name__) + self.group + '_move_map.txt'
+            file = "maps/now/" + str(map_types[k].__name__) + "_" + self.group + "_move_map.txt"
         with open(file) as map_file:
-            MAP = []
-            for i in ((map_file.read()).split('\n'))[1:]:
-                MAP += i.split()
-        if self.x == '-':
-            self.x = MAP[-1][0]
-            self.y = MAP[-1][1]
-        if self.distance == "-":
-            self.distance = float(MAP[0][0])
-        self.move(MAP[int(self.x / g_c.WIDTH * len(MAP[1]))][int(self.y / g_c.HEIGHT * (len(MAP) - 1))])
+            map_file_lines = (map_file.read()).split("\n")
+            if self.distance == "-":
+                self.distance = map_file_lines[0][0]
+            level_map = []
+            for i in map_file_lines[1:]:
+                level_map += i.split()
+        if self.x == "-":
+            self.x = float(level_map[-1][0])
+            self.y = float(level_map[-1][1])
+        self.move(level_map[int(self.x / g_c.WIDTH * len(level_map[1]))][int(self.y / g_c.HEIGHT * (len(level_map) - 1))])
         self.distance -= self.speed
 
-    def move(self, an='-'):
-        if an == 'stop':
+    def move(self, an="-"):
+        if an == "stop":
             pass
             # FIXME тут ГГ должен получить урон, + self.death()
-        elif an != '-':
+        elif an != "-":
             x = float(an.split(";")[0])
             y = float(an.split(";")[1])
             dx = self.x - x

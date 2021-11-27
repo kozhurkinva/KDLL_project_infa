@@ -2,7 +2,7 @@ import pygame
 from game_constants import *
 import pygame.draw as dr
 from game_visualisation import *
-import game_visualisation
+from game_objects import *
 
 
 class Game:
@@ -14,6 +14,7 @@ class Game:
         self.level = 0
         self.tower_types = [0] * 999
         self.towers = []
+        self.opponents = []
         self.start_button = Button(x=50, y=400, image=pygame.image.load("Textures/StartButton.png").convert_alpha(),
                                    scale=0.5)
         self.stop_button = Button(x=600, y=400, image=pygame.image.load("Textures/StopButton.png").convert_alpha(),
@@ -28,6 +29,7 @@ class Game:
                 if self.start_button.is_pressed(screen):
                     print("Game starts!")
                     self.level += 1  # FIXME: тестовая штука, потом изменится обязательно!
+                    self.opponents += [Warrior()]
                     self.start_flag = True
 
             if self.start_flag:
@@ -51,6 +53,8 @@ class Game:
             if self.stop_button.is_pressed(screen):
                 finished = True
 
+            for opp in self.opponents:
+                opp.move_opponent()
             pygame.display.update()
             clock.tick(FPS)
         pygame.quit()
