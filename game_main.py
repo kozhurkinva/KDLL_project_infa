@@ -15,6 +15,7 @@ class Game:
         self.tower_types = [0] * 999
         self.towers = []
         self.opponents = []
+        self.bullets = []
         self.start_button = Button(x=50, y=400, image=pygame.image.load("Textures/StartButton.png").convert_alpha(),
                                    scale=0.5)
         self.stop_button = Button(x=600, y=400, image=pygame.image.load("Textures/StopButton.png").convert_alpha(),
@@ -47,14 +48,16 @@ class Game:
                 else:
                     pass  # FIXME: self.level выбирается на пользовательском интерфейсе
 
-            for elem in self.towers:
-                elem.check_cause()
-
             if self.stop_button.is_pressed(screen):
                 finished = True
 
+            for tower in self.towers:
+                tower.check_cause()
+
             for opp in self.opponents:
                 opp.move_opponent()
+                for projectile in opp.projectiles:
+                    projectile.draw(screen)
                 opp.draw(screen)    # FIXME временно, для тестов
             pygame.display.update()
             draw_map(screen, self.level, self.tower_types)

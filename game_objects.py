@@ -133,9 +133,9 @@ class BallisticBullet:
             self.shot_creature.projectiles.pop(self.shot_creature.projectiles.index(self))
             self.shot_creature.take_damage(self.dmg)
 
-    def draw(self):
+    def draw(self, screen):
         """ Рисует пулю в полёте """
-        pass
+        pygame.draw.circle(screen, (50, 50, 50), (self.x, self.y), 10)
 
 
 class StraightBullet:
@@ -164,6 +164,7 @@ class Creature:
             self.die()
 
     def die(self):
+        self.speed = 0
         pass
 
     def draw(self, screen):
