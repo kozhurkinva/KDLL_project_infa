@@ -1,5 +1,8 @@
 import math
 import os.path as path
+
+import pygame.draw  # FIXME пока не доделан vis
+
 import game_constants as g_c
 
 
@@ -190,20 +193,24 @@ class Opponent(Creature):
         if self.x == "-":
             self.x = float(level_map[-1][0])
             self.y = float(level_map[-1][1])
-        self.move(level_map[int(self.x / g_c.WIDTH * (len(level_map) - 1))][int(self.y / g_c.HEIGHT * len(level_map[1]))])
+            print("I've started", self.x, self.y)
+        self.move(level_map[int(self.x / g_c.WIDTH * len(level_map[1]))][int(self.y / g_c.HEIGHT * (len(level_map) - 1))])
         self.distance -= self.speed
 
     def move(self, an="-"):
         if an == "stop":
-            pass
+            if self.hp > 0:
+                print("I've stopped", self.x, self.y)
+                self.speed = 0
+                self.hp = 0
             # FIXME тут ГГ должен получить урон, + self.death()
         elif an != "-":
             x = float(an.split(";")[0])
             y = float(an.split(";")[1])
-            dx = self.x - x
-            dy = self.y - y
+            dx = x - self.x
+            dy = y - self.y
             if dx != 0:
-                self.move_an = math.atan(dy / dx) + math.pi / 2 * int(dx < 0)
+                self.move_an = math.atan(dy / dx) + math.pi * int(dx < 0)
             else:
                 self.move_an = math.pi / 2 * (int(dy > 0) - int(dy < 0))
         self.x += self.speed * math.cos(self.move_an)
@@ -216,3 +223,6 @@ class Warrior(Opponent):
         self.hp = 10
         self.dmg = 1
         self.speed = 1
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, (0, 0, 0), (self.x, self.y), 10) # FIXME временная прорисовка

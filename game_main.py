@@ -55,6 +55,7 @@ class Game:
 
             for opp in self.opponents:
                 opp.move_opponent()
+                opp.draw(screen)    # FIXME временно, для тестов
             pygame.display.update()
             clock.tick(FPS)
         pygame.quit()

@@ -71,9 +71,11 @@ if len(move_trajectory) >= 2:
     for i in range(len(move_trajectory[0:-1])):
         x = move_trajectory[i][0]
         y = move_trajectory[i][1]
-        map_info[y][x] = str((x + 0.5) * rect_size[0]) + ";" + str((y + 0.5) * rect_size[1])
-map_info[move_trajectory[-1][1]][move_trajectory[-1][0]] = "stop"
-map_info += [[(move_trajectory[0][1] + 0.5) * rect_size[0], (move_trajectory[0][0] + 0.5) * rect_size[1]]]
+        nx = move_trajectory[i + 1][0]
+        ny = move_trajectory[i + 1][1]
+        map_info[x][y] = str((nx + 0.5) * rect_size[0]) + ";" + str((ny + 0.5) * rect_size[1])
+map_info[move_trajectory[-1][0]][move_trajectory[-1][1]] = "stop"
+map_info += [[(move_trajectory[0][0] + 0.5) * rect_size[0], (move_trajectory[0][1] + 0.5) * rect_size[1]]]
 # сохранение данных
 with open("maps/new/" + file_name, "w") as file:
     file.write(str(trajectory_length) + " ")
