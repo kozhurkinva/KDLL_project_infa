@@ -55,7 +55,7 @@ class Game:
                 tower.check_cause()
 
             for opp in self.opponents:
-                opp.move_opponent()
+                opp.move_opponent("level" + str(self.level))
                 for projectile in opp.projectiles:
                     projectile.draw(screen)
                 opp.draw(screen)    # FIXME временно, для тестов

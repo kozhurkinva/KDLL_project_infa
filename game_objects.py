@@ -181,13 +181,13 @@ class Opponent(Creature):
         self.group = group
         self.distance = "-"
 
-    def move_opponent(self):
+    def move_opponent(self, level_name):
         map_types = type(self).__mro__
         k = 0
-        file = "maps/now/" + str(map_types[0].__name__) + "_" + self.group + "_move_map.txt"
+        file = "maps/" + level_name + "/" + str(map_types[0].__name__) + "_" + self.group + "_move_map.txt"
         while not path.exists(file):
             k += 1
-            file = "maps/now/" + str(map_types[k].__name__) + "_" + self.group + "_move_map.txt"
+            file = "maps/" + level_name + "/" + str(map_types[k].__name__) + "_" + self.group + "_move_map.txt"
         with open(file) as map_file:
             map_file_lines = (map_file.read()).split("\n")
             if self.distance == "-":
