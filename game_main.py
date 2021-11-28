@@ -29,7 +29,7 @@ class Game:
                 if self.start_button.is_pressed(screen):
                     print("Game starts!")
                     self.level += 1  # FIXME: тестовая штука, потом изменится обязательно!
-                    self.opponents += [Warrior()]
+                    self.opponents += [Warrior("alpha"), Warrior("beta")]
                     self.start_flag = True
 
             if self.start_flag:
@@ -57,6 +57,7 @@ class Game:
                 opp.move_opponent()
                 opp.draw(screen)    # FIXME временно, для тестов
             pygame.display.update()
+            draw_map(screen, self.level, self.tower_types)
             clock.tick(FPS)
         pygame.quit()
 

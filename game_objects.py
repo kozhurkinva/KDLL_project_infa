@@ -166,6 +166,10 @@ class Creature:
     def die(self):
         pass
 
+    def draw(self, screen):
+        img = pygame.image.load("Textures/" + str(type(self).__mro__[0].__name__) + ".png").convert_alpha()
+        screen.blit(img, (self.x, self.y))
+
 
 class Opponent(Creature):
     def __init__(self, group="alpha"):
@@ -194,7 +198,8 @@ class Opponent(Creature):
             self.x = float(level_map[-1][0])
             self.y = float(level_map[-1][1])
             print("I've started", self.x, self.y)
-        self.move(level_map[int(self.x / g_c.WIDTH * len(level_map[1]))][int(self.y / g_c.HEIGHT * (len(level_map) - 1))])
+        self.move(
+            level_map[int(self.x / g_c.WIDTH * len(level_map[1]))][int(self.y / g_c.HEIGHT * (len(level_map) - 1))])
         self.distance -= self.speed
 
     def move(self, an="-"):
@@ -218,11 +223,8 @@ class Opponent(Creature):
 
 
 class Warrior(Opponent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, group):
+        super().__init__(group)
         self.hp = 10
         self.dmg = 1
         self.speed = 1
-
-    def draw(self, screen):
-        pygame.draw.circle(screen, (0, 0, 0), (self.x, self.y), 10) # FIXME временная прорисовка
