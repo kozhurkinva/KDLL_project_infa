@@ -2,7 +2,9 @@ import pygame
 from game_constants import *
 import pygame.draw as dr
 from game_visualisation import *
-from game_objects import *
+from game_objects_creatures import *
+from game_objects_towers import *
+from game_objects_projectiles import *
 
 
 class Game:
@@ -31,6 +33,7 @@ class Game:
                     print("Game starts!")
                     self.level += 1  # FIXME: тестовая штука, потом изменится обязательно!
                     self.opponents += [Warrior("alpha"), Warrior("beta")]
+                    self.towers += [ArrowTower(200, 200, self.opponents)]
                     self.start_flag = True
 
             if self.start_flag:
@@ -55,8 +58,11 @@ class Game:
                 tower.check_cause()
 
             for opp in self.opponents:
+                if not opp.alive:
+                    self.opponents.pop(self.opponents.index(opp))
                 opp.move_opponent("level" + str(self.level))
                 for projectile in opp.projectiles:
+                    projectile.move()
                     projectile.draw(screen)
                 opp.draw(screen)    # FIXME временно, для тестов
             pygame.display.update()
