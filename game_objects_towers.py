@@ -13,14 +13,16 @@ class Tower:
         Инициализация класса Tower (все возможные башни).
         У каждой есть своё положение на карте (x, y), причина срабатывания её действия (cause), стоимость её постройки
         (cost), время, которое должно пройти до возможности срабатывания следующего действия (reload_time), расстояние,
-        на котором башня детектит происходящее (range) и каждой передаётся список существующих на данный мамент врагов.
-        Также башни имеют атрибут charged_time, хранящий в себе время простоя башни с последнего действия
+        на котором башня детектит происходящее (range), у некоторых - наносимый башней урон (dmg)
+        и каждой передаётся список существующих на данный мамент врагов.
+        Также башни имеют атрибут charged_time, хранящий в себе время простоя башни с последнего действия.
         """
         self.x = x
         self.y = y
         self.cause = cause
         self.ready_for_action = False
         self.cost = 0
+        self.dmg = 0
         self.reload_time = 1
         self.charged_time = 0
         self.range = 0
@@ -77,6 +79,7 @@ class Tower:
 
 class ArrowTower(Tower):
     def __init__(self, x, y, enemy_list):
+        """ Инициализация подкласса Tower - ArrowTower. Башня лучников выпускает стрелы """
         super().__init__(x, y, "enemy_in_range", enemy_list)
         self.cost = 10
         self.range = 100
@@ -84,23 +87,35 @@ class ArrowTower(Tower):
         self.dmg = 2
 
     def action(self, closest_enemy):
-        closest_enemy.projectiles.append(
-            BallisticBullet("arrow", self.dmg, self.x, self.y, 2,
-                            closest_enemy,
-                            1 / 6))  # FIXME координаты вылета пули != x y, а зависят от них, скорость и ускорение - ???
+        """ Выпускает стрелу в closest_enemy """
+        closest_enemy.projectiles.append(BallisticProjectile("Arrow", self.dmg, self.x, self.y, 3, closest_enemy, 0.17))
+        # FIXME координаты вылета пули != x y, а зависят от них, скорость и ускорение - ??? (зависит от карты?)
 
 
 class GunTower(Tower):
     def __init__(self, x, y, enemy_list):
+        """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
         super().__init__(x, y, "enemy_in_range", enemy_list)
         self.cost = 15
         self.range = 75
-        self.reload_time = 8
+        self.reload_time = 10
+        self.dmg = 1
+
+    def action(self, closest_enemy):
+        """ Выпускает пулю в closest_enemy """
+        closest_enemy.projectiles.append(StraightProjectile("Bullet", self.dmg, self.x, self.y, 5, closest_enemy))
 
 
 class BombTower(Tower):
     def __init__(self, x, y, enemy_list):
+        """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
         super().__init__(x, y, "ground_enemy_in_range", enemy_list)
         self.cost = 25
         self.range = 60
-        self.reload_time = 15
+        self.reload_time = 150
+        self.dmg = 10
+
+    def action(self, closest_enemy):
+        """ Выпускает бомбу в closest_enemy (наносит урон по площади) """
+        closest_enemy.projectiles.append(
+            BombProjectile("Bomb", self.dmg, self.x, self.y, 2, closest_enemy, 0.17, self.enemy_list))

@@ -31,9 +31,11 @@ class Creature:
             self.die()
 
     def die(self):
+        """ Существо перестаёт считаться живым, после чего его удалят из числа существ в main-е"""
         self.alive = False
 
     def draw(self, screen):
+        """ Рисует живое существо """
         img = pygame.image.load("Textures/" + str(type(self).__mro__[0].__name__) + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
 
@@ -85,8 +87,10 @@ class Opponent(Creature):
                 self.move_an = math.atan(dy / dx) + math.pi * int(dx < 0)
             else:
                 self.move_an = math.pi / 2 * (int(dy > 0) - int(dy < 0))
-        self.x += self.speed * math.cos(self.move_an)
-        self.y += self.speed * math.sin(self.move_an)
+        self.vx = self.speed * math.cos(self.move_an)
+        self.vy = self.speed * math.sin(self.move_an)
+        self.x += self.vx
+        self.y += self.vy
 
 
 class Warrior(Opponent):
