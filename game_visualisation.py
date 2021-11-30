@@ -5,6 +5,10 @@ from game_objects_towers import *
 
 class Menu:
     def __init__(self, game):
+        """
+        Базовый класс меню, от него наследуются остальные: главное меню, меню выбора урвней и т.д.
+        :param game: игра как объект освного класса Game
+        """
         self.game = game
         self.mid_h, self.mid_w = self.game.HEIGHT / 2, self.game.WIDTH / 2
         self.run_display = True
@@ -22,6 +26,10 @@ class Menu:
 
 class MainMenu(Menu):
     def __init__(self, game):
+        """
+        Основное меню. В нем осуществляется навигация по настройкам игры, а также выход из игры.
+        :param game: игра как объект освного класса Game
+        """
         Menu.__init__(self, game)
         self.state = "Start Game"
         self.startx, self.starty = self.mid_w, self.mid_h + 20
@@ -31,6 +39,9 @@ class MainMenu(Menu):
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
 
     def display_menu(self):
+        """
+        Отображает меню на экране
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()
@@ -45,6 +56,9 @@ class MainMenu(Menu):
             self.blit_screen()
 
     def move_cursor(self):
+        """
+        Отвечает за передвижение курсора пользователя - стрелочка справа от аттрибутов меню
+        """
         if self.game.DOWN_KEY:
             if self.state == "Start Game":
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
@@ -73,6 +87,10 @@ class MainMenu(Menu):
                 self.state = "Credits"
 
     def check_input(self):
+        """
+        Обрабатывает собылия нажатия на соответствующие аттрибуты меню и осущетсвляет взаимодействия пользователя с меню
+        :return:
+        """
         self.move_cursor()
         if self.game.START_KEY:
             if self.state == "Start Game":
@@ -88,6 +106,12 @@ class MainMenu(Menu):
 
 class LevelsMenu(Menu):
     def __init__(self, game):
+        """
+        Меню выбора уровней.
+        Методы аналогичны методам MainMenu.
+        При нажатии на соответствующий уровень запускает игровой процесс этого уровня
+        :param game: объект основного класса Game
+        """
         Menu.__init__(self, game)
         self.state = "Level 1"
         self.lvl1_x, self.lvl1_y = self.mid_w, self.mid_h + 20
@@ -139,7 +163,7 @@ class LevelsMenu(Menu):
             self.game.playing = True
 
 
-class IngameMenu(Menu):
+class IngameMenu(Menu): #FIXME: здесь будет реализована игровая пауза
     def __init__(self, game):
         Menu.__init__(self, game)
         self.pausex, self.pausey = self.mid_w, self.mid_h + 20
@@ -147,6 +171,12 @@ class IngameMenu(Menu):
 
 class OptionsMenu(Menu):
     def __init__(self, game):
+        """
+        Меню настроек.
+        Методы аналогичны методам MainMenu.
+        Будет реализована настройка звука и некоторые другие
+        :param game: объект основного класса Game
+        """
         Menu.__init__(self, game)
         self.state = "Volume"
         self.volx, self.voly = self.mid_w, self.mid_h + 20
@@ -183,6 +213,12 @@ class OptionsMenu(Menu):
 
 class CreditsMenu(Menu):
     def __init__(self, game):
+        """
+        Меню валюты или очков.
+        Методы аналогичны методам MainMenu.
+        Позже будет встроено в логику работы программы
+        :param game: объект основного класса Game
+        """
         Menu.__init__(self, game)
 
     def display_menu(self):
@@ -200,6 +236,13 @@ class CreditsMenu(Menu):
 
 class Level:
     def __init__(self, level, screen):
+        """
+        Класс уровня.
+        Здесь производится загрузка всех параметров уровня: загружаются текстуры, инициализируется спрайты.
+        Данные о данном уровне парсятся из текстового файла level_designs
+        :param level: название текущего уровнея в формате "Level #", где # - номер уровня.
+        :param screen: поверхность для отрисовки
+        """
         self.opponents = []
         self.level = level[-1]
         self.screen = screen
@@ -224,41 +267,27 @@ class Level:
                 click = Button(x, y, self.images[0], 1)
                 self.ingame_towers.append(click)
 
-    def draw(self):
+    def draw(self): # FIXME: добавить отрисовку остальных спрайтов, не только башен
+        """
+        Отрисовка башен и обработка нажатия на них пользователя.
+        :return:
+        """
         self.screen.blit(self.background_img, (0, 0))
         for tower in self.ingame_towers:
             if tower.is_pressed(self.screen):
                 tower.image = self.images[1]
 
 
-
-
-# def draw_map(screen, level, towers):
-#     towers_pos = []
-#
-#     background_img = pygame.image.load("Textures/Background" + str(level) + ".png").convert_alpha()
-#     screen.blit(background_img, (0, 0))
-#
-#     towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
-#     towerspot_rect = towerspot_img.get_rect()
-#
-#     archertower_img = pygame.image.load("Textures/ArcherTower.png").convert_alpha()
-#     archertower_rect = archertower_img.get_rect()
-#
-#     images = [towerspot_img, archertower_img]
-#
-#     with open("level_designs.txt", "r") as level_design:
-#         design = level_design.readlines()[level].split()
-#         for i in range(int(design[1])):
-#             x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-#             towers_pos.append([x, y])
-#
-#     for tower in towers_pos:
-#         screen.blit(images[towers[i]], tower)
-
-
 class Button:
     def __init__(self, x, y, image, scale):
+        """
+        Класс кнопки.
+        Может сделать какой-то спрайт или область экрана кликабельными.
+        :param x: x-коодината левого верххнего угла прямоугольника, в котором расположено изображение спрайта или кнопки
+        :param y: y-коодината левого верххнего угла прямоугольника, в котором расположено изображение спрайта или кнопки
+        :param image: изображение спрайта или кнопки в виде png-файла
+        :param scale: масштаб  поотношению к исходному файлу с изображением
+        """
         width = image.get_width()
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
@@ -267,6 +296,11 @@ class Button:
         self.clicked = False
 
     def is_pressed(self, surface):
+        """
+        Обработчик нажатия на кнопку, а также отрисовщик кнопки.
+        :param surface: поверхность отрисовки
+        :return: состояние кнопки (нажата или нет)
+        """
         action = False
         pos = pygame.mouse.get_pos()
 

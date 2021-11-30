@@ -7,6 +7,11 @@ from game_objects_towers import *
 
 class Game:
     def __init__(self):
+        """
+        Основной класс игры.
+        Здесь происзодит инициалиция размеров окна, настройка соответствущих флагов,
+        поверхностей отрисовки, шрифта текста, а также инициализация меню и переменных логики игры
+        """
         # General
         pygame.init()
         self.WIDTH, self.HEIGHT = 800, 600
@@ -38,6 +43,9 @@ class Game:
         self.curr_menu = self.main_menu
 
     def main_loop(self):
+        """
+        Основной цикл игры. Здесь происходит отрисовка уровня и непосредственно игровой процесс.
+        """
         while self.playing:
             self.check_events()
             if self.START_KEY:
@@ -51,7 +59,10 @@ class Game:
             self.reset_keys()
             self.clock.tick(self.FPS)
 
-    def gaming(self):
+    def gaming(self):  # FIXME: возможно будет перенесена целиком в main_loop
+        """
+        Отдельная функция непосредственно всех процессов, происходящих во время игры
+        """
         self.level.draw()
 
         for tower in self.towers:
@@ -64,6 +75,10 @@ class Game:
             opp.draw(self.display)  # FIXME временно, для тестов
 
     def check_events(self):
+        """
+        Функция-обработчик событий pygame. В частности, обработчик нажатия пользователем соответсвутющей
+        клавиши на клавиатуре и выхода из игры
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
@@ -79,9 +94,20 @@ class Game:
                     self.UP_KEY = True
 
     def reset_keys(self):
+        """
+        Обновление состояния флажков нажатия на кнопку
+        """
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
 
     def draw_text(self, text, size, x, y):
+        """
+        Универсальная функция отрисовки текста
+        :param text: то, что будет напечатано
+        :param size: размер текста
+        :param x: x-положение левого верхнего угла поля с текстом
+        :param y: y-положение левого верхнего угла поля с текстом
+        :return:
+        """
         font = pygame.font.Font(self.font_name, size)
         text_surface = font.render(text, True, self.WHITE)
         text_rect = text_surface.get_rect()
