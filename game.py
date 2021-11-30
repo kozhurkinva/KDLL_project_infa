@@ -27,6 +27,7 @@ class Game:
 
         # Game variables
         self.level_name = 0
+        self.player_health = 20
         self.tower_types = [0] * 999
         self.towers = []
         # self.opponents = []
@@ -70,6 +71,10 @@ class Game:
 
         for opp in self.level.opponents:
             opp.move_opponent((self.level_name.lower()).replace(' ', ''))
+            if opp.finished:
+                self.player_health -= opp.player_damage
+            if not opp.alive:
+                self.level.opponents.pop(self.level.opponents.index(opp))
             for projectile in opp.projectiles:
                 projectile.move(self.display)
             opp.draw(self.display)  # FIXME временно, для тестов

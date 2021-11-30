@@ -64,9 +64,9 @@ class Tower:
                         range_for_closest = enemy.distance
 
         if self.charged_time >= self.reload_time and self.ready_for_action:
+            self.action(closest_enemy)
             self.charged_time = 0
             self.ready_for_action = False
-            self.action(closest_enemy)
 
     def action(self, potential_closest_enemy_or_some_other_variable_from_checker):
         """
@@ -119,3 +119,19 @@ class BombTower(Tower):
         """ Выпускает бомбу в closest_enemy (наносит урон по площади) """
         closest_enemy.projectiles.append(
             BombProjectile("Bomb", self.dmg, self.x, self.y, 2, closest_enemy, 0.17, self.enemy_list))
+
+
+class ChargingTower(Tower):
+    """ Прототип башни с уроном, зависящем от времени простоя """
+
+    def __init__(self, x, y, enemy_list):
+        super().__init__(x, y, "enemy_in_range", enemy_list)
+        self.cost = 25
+        self.range = 100
+        self.reload_time = 25
+        self.dmg = 1
+
+    def action(self, closest_enemy):
+        closest_enemy.projectiles.append(
+            StraightProjectile("Arrow", self.dmg + (self.charged_time - self.reload_time) / 60, self.x, self.y, 1,
+                               closest_enemy))

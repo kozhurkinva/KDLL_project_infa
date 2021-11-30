@@ -258,7 +258,9 @@ class Level:
         self.archertower_rect = self.archertower_img.get_rect()
 
         self.images = [self.towerspot_img, self.archertower_img]
+
         self.opponents += [Warrior("alpha"), Warrior("beta")]
+        # self.opponents += [Bird("alpha")]
 
         with open("level_designs.txt", "r") as level_design:
             design = level_design.readlines()[int(self.level)].split()

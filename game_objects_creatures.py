@@ -47,7 +47,9 @@ class Opponent(Creature):
         self.x = 999999999999999
         self.y = 999999999999999
         self.group = group
+        self.player_damage = 1
         self.distance = "-"
+        self.finished = False
 
     def move_opponent(self, level_name):
         map_types = type(self).__mro__
@@ -72,12 +74,15 @@ class Opponent(Creature):
         self.distance -= self.speed
 
     def move(self, an="-"):
+        """FIXME
+
+        :param an: при окончании движения принимает значение stop, затем враг "умирает", а герой получает урон
+        :return:
+        """
         if an == "stop":
-            if self.hp > 0:
-                print("I've stopped", self.x, self.y)
-                self.speed = 0
-                self.hp = 0
-            # FIXME тут ГГ должен получить урон, + self.death()
+            self.alive = False
+            self.finished = True
+
         elif an != "-":
             x = float(an.split(";")[0])
             y = float(an.split(";")[1])
@@ -91,6 +96,7 @@ class Opponent(Creature):
         self.vy = self.speed * math.sin(self.move_an)
         self.x += self.vx
         self.y += self.vy
+        return 0
 
 
 class Warrior(Opponent):
@@ -99,3 +105,12 @@ class Warrior(Opponent):
         self.hp = 10
         self.dmg = 1
         self.speed = 1
+
+
+class Bird(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 5
+        self.dmg = 1
+        self.speed = 20
+        self.types += ["flying"]
