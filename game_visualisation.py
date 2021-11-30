@@ -259,8 +259,11 @@ class Level:
 
         self.images = [self.towerspot_img, self.archertower_img]
 
-        self.opponents += [Warrior("alpha"), Warrior("beta")]
-        # self.opponents += [Bird("alpha")]
+        # FIXME в будущем спавн будет работать по другому
+        if self.level == "1":
+            self.opponents += [Warrior("alpha"), Warrior("beta")]
+        elif self.level == "2":
+            self.opponents += [Bird("alpha")]
 
         with open("level_designs.txt", "r") as level_design:
             design = level_design.readlines()[int(self.level)].split()
