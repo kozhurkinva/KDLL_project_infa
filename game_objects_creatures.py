@@ -120,7 +120,8 @@ class Bird(Opponent):
         super().__init__(group)
         self.hp = 5
         self.dmg = 1
-        self.speed = 5
+        self.speed = 20
+        self.player_damage = 2
         self.alpha = 8 # коэфициент для растяжения hp bar по длине изображения
         self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
         self.types += ["flying"]

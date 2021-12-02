@@ -27,7 +27,6 @@ class Game:
 
         # Game variables
         self.level_name = 0
-        self.player_health = 20
         self.tower_types = [0] * 999
         self.towers = []
         # self.opponents = []
