@@ -8,13 +8,13 @@ from game_objects_projectiles import *
 
 
 class Tower:
-    def __init__(self, x, y, cause, enemy_list, image_path):
+    def __init__(self, x, y, cause, enemy_list, sprite):
         """
         Инициализация класса Tower (все возможные башни).
         У каждой есть своё положение на карте (x, y), причина срабатывания её действия (cause), стоимость её постройки
         (cost), время, которое должно пройти до возможности срабатывания следующего действия (reload_time), расстояние,
         на котором башня детектит происходящее (range), у некоторых - наносимый башней урон (dmg)
-        и каждой передаётся список существующих на данный мамент врагов.
+        и каждой передаётся список существующих на данный мамент врагов + название файла с картинкой башни.
         Также башни имеют атрибут charged_time, хранящий в себе время простоя башни с последнего действия.
         """
         self.x = x
@@ -29,7 +29,7 @@ class Tower:
         self.enemy_list = enemy_list
 
         # for drawing
-        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = pygame.image.load("Textures/" + sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
         self.image_rect.topleft = (self.x, self.y)
 
@@ -110,7 +110,7 @@ class Tower:
 class ArrowTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - ArrowTower. Башня лучников выпускает стрелы """
-        super().__init__(x, y, "enemy_in_range", enemy_list, "Textures/ArcherTower.png")
+        super().__init__(x, y, "enemy_in_range", enemy_list, "ArrowTower")
         self.cost = 10
         self.range = 100
         self.reload_time = 40
@@ -125,7 +125,7 @@ class ArrowTower(Tower):
 class GunTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
-        super().__init__(x, y, "enemy_in_range", enemy_list, "Textures/TowerSpot.png")
+        super().__init__(x, y, "enemy_in_range", enemy_list, "GunTower")
         self.cost = 15
         self.range = 75
         self.reload_time = 10
@@ -139,7 +139,7 @@ class GunTower(Tower):
 class BombTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
-        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "something")
+        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "BombTower")
         self.cost = 25
         self.range = 60
         self.reload_time = 150

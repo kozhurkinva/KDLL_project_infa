@@ -113,4 +113,5 @@ class Bird(Opponent):
         self.hp = 5
         self.dmg = 1
         self.speed = 20
+        self.player_damage = 2
         self.types += ["flying"]

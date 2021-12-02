@@ -243,9 +243,9 @@ class Level:
         :param level: название текущего уровнея в формате "Level #", где # - номер уровня.
         :param screen: поверхность для отрисовки
         """
+        self.player_health = 20
         self.opponents = []
         self.towers = []
-        self.bullets = []
 
         self.level = (level.lower()).replace(' ', '')[-1]
 
@@ -256,7 +256,7 @@ class Level:
         self.background_img = pygame.image.load("Textures/Background" + self.level + ".png").convert_alpha()
         self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
         self.towerspot_rect = self.towerspot_img.get_rect()
-        self.archertower_img = pygame.image.load("Textures/ArcherTower.png").convert_alpha()
+        self.archertower_img = pygame.image.load("Textures/ArrowTower.png").convert_alpha()
         self.archertower_rect = self.archertower_img.get_rect()
 
         self.images = [self.towerspot_img, self.archertower_img]
@@ -286,6 +286,11 @@ class Level:
             tower.draw(self.screen)
 
         for opp in self.opponents:
+            if not opp.alive:
+                self.opponents.pop(self.opponents.index(opp))
+            if opp.finished:
+                self.player_health -= opp.player_damage
+                print(self.player_health)
             opp.move_opponent(self.level_name)
             for projectile in opp.projectiles:
                 projectile.move(self.screen)
