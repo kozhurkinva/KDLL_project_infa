@@ -14,6 +14,7 @@ class Creature:
         а также прикреплённый к ним список летящих в него в данный момент снарядов, перемещающихся вместе с ними
         """
         self.hp = 0
+
         self.dmg = 0
         self.speed = 0
         self.vx = 0
@@ -21,6 +22,7 @@ class Creature:
         self.types = []
         self.projectiles = []
         self.alive = True
+        self.alpha = 1
 
     def take_damage(self, dmg):
         """
@@ -38,6 +40,10 @@ class Creature:
         """ Рисует живое существо """
         img = pygame.image.load("Textures/" + str(type(self).__mro__[0].__name__) + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
+        ''' рисует hp bar и его рамку '''
+        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp*self.alpha, 10))
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, self.hp_bar_limit*self.alpha, 10), 2)
+
 
 
 class Opponent(Creature):
@@ -105,6 +111,8 @@ class Warrior(Opponent):
         self.hp = 10
         self.dmg = 1
         self.speed = 1
+        self.alpha = 7 # коэфициент для растяжения hp bar по длине изображения
+        self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
 
 
 class Bird(Opponent):
@@ -114,4 +122,6 @@ class Bird(Opponent):
         self.dmg = 1
         self.speed = 20
         self.player_damage = 2
+        self.alpha = 8 # коэфициент для растяжения hp bar по длине изображения
+        self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
         self.types += ["flying"]
