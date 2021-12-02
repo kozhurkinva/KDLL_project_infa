@@ -244,6 +244,7 @@ class Level:
         :param screen: поверхность для отрисовки
         """
         self.player_health = 20
+        self.player_money = 70
         self.opponents = []
         self.towers = []
 
@@ -256,7 +257,7 @@ class Level:
         self.background_img = pygame.image.load("Textures/Background" + self.level + ".png").convert_alpha()
         self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
         self.towerspot_rect = self.towerspot_img.get_rect()
-        self.archertower_img = pygame.image.load("Textures/ArrowTower.png").convert_alpha()
+        self.archertower_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
         self.archertower_rect = self.archertower_img.get_rect()
 
         self.images = [self.towerspot_img, self.archertower_img]
@@ -282,22 +283,26 @@ class Level:
         for tower in self.towers:
             tower.check_cause()
             if tower.is_clicked():
-                pass
+                if self.player_money >= tower.upgrade_cost:
+                    self.player_money -= tower.upgrade_cost
+                    tower.upgrade()
+                print(self.player_money)
             tower.draw(self.screen)
 
         for opp in self.opponents:
             if not opp.alive:
                 self.opponents.pop(self.opponents.index(opp))
+                self.player_money += opp.loot
             if opp.finished:
                 self.player_health -= opp.player_damage
-                print(self.player_health)
+                self.player_money -= opp.loot  # в случае прохода врага деньги не добавляются
             opp.move_opponent(self.level_name)
             for projectile in opp.projectiles:
                 projectile.move(self.screen)
             opp.draw(self.screen)  # FIXME временно, для тестов
 
 
-class Button: # FIXME: возможно вообще уберем этот класс
+class Button:  # FIXME: возможно вообще уберем этот класс
     def __init__(self, x, y, image, scale):
         """
         Класс кнопки.

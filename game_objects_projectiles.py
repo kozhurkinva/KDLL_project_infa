@@ -21,6 +21,14 @@ class Projectile:
         img = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
 
+    def relocate(self, direction):
+        """
+        Если снаряд в полёте должен поменять направление , в этой функции изменится его спрайт
+        (direction принимает значения "L" и "R" и поворачивает снаряд соотв влево или вправо)
+        """
+        if self.sprite[0] == "R" or self.sprite[0] == "L":
+            self.sprite = direction + self.sprite[1:]
+
 
 class BallisticProjectile(Projectile):
     def __init__(self, sprite, dmg, x, y, projectile_speed, shot_creature, gravity_acceleration):
@@ -44,6 +52,10 @@ class BallisticProjectile(Projectile):
         self.x += self.vx + self.shot_creature.vx
         self.y += self.vy + self.shot_creature.vy
         self.vy += self.a
+        if self.vx + self.shot_creature.vx > 0:
+            self.relocate("R")
+        else:
+            self.relocate("L")
         if self.time_of_flight <= 0:
             self.shot_creature.projectiles.pop(self.shot_creature.projectiles.index(self))
             self.shot_creature.take_damage(self.dmg)

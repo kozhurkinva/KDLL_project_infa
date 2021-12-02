@@ -111,6 +111,7 @@ class Warrior(Opponent):
         self.hp = 10
         self.dmg = 1
         self.speed = 1
+        self.loot = 5
         self.alpha = 7 # коэфициент для растяжения hp bar по длине изображения
         self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
 
@@ -118,9 +119,10 @@ class Warrior(Opponent):
 class Bird(Opponent):
     def __init__(self, group):
         super().__init__(group)
-        self.hp = 5
+        self.hp = 8
         self.dmg = 1
-        self.speed = 20
+        self.speed = 2
+        self.loot = 7
         self.player_damage = 2
         self.alpha = 8 # коэфициент для растяжения hp bar по длине изображения
         self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)

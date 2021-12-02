@@ -20,6 +20,7 @@ class Tower:
         self.x = x
         self.y = y
         self.cause = cause
+        self.level = 1
         self.ready_for_action = False
         self.cost = 0
         self.dmg = 0
@@ -27,9 +28,10 @@ class Tower:
         self.charged_time = 0
         self.range = 0
         self.enemy_list = enemy_list
+        self.sprite = sprite
 
         # for drawing
-        self.image = pygame.image.load("Textures/" + sprite + ".png").convert_alpha()
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
         self.image_rect.topleft = (self.x, self.y)
 
@@ -84,6 +86,13 @@ class Tower:
         """
         pass
 
+    def relocate(self, direction):
+        """ Меняет ориентацию башни, чтобы та смотрела в сторону врага, в которого стреляет (direction) """
+        self.sprite = direction + self.sprite[1:]
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
+
     def draw(self, display):
         """
         Отрисовывает изображение башни на поверххности display
@@ -110,22 +119,49 @@ class Tower:
 class ArrowTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - ArrowTower. Башня лучников выпускает стрелы """
-        super().__init__(x, y, "enemy_in_range", enemy_list, "ArrowTower")
+        super().__init__(x, y, "enemy_in_range", enemy_list, "LArrowTower1")
+        self.level = 1
         self.cost = 10
+        self.upgrade_cost = 20
         self.range = 100
         self.reload_time = 40
         self.dmg = 2
 
+    def upgrade(self):
+        """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт) """
+        if self.level == 1:
+            self.upgrade_cost = 35
+            self.sprite = self.sprite[0] + "ArrowTower2"
+            self.range = 120
+            self.reload_time = 35
+            self.dmg = 3
+        elif self.level == 2:
+            self.upgrade_cost = 50
+            self.sprite = self.sprite[0] + "ArrowTower3"
+            self.range = 150
+            self.reload_time = 30
+            self.dmg = 5
+        self.level += 1
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
+
     def action(self, closest_enemy):
-        """ Выпускает стрелу в closest_enemy """
-        closest_enemy.projectiles.append(BallisticProjectile("Arrow", self.dmg, self.x, self.y, 3, closest_enemy, 0.17))
+        """ Выпускает стрелу в closest_enemy, также в случае необходимости меняет направление обзора на врага """
+        if closest_enemy.x > self.x:
+            sprite = "RArrow"
+            self.relocate("R")
+        else:
+            sprite = "LArrow"
+            self.relocate("L")
+        closest_enemy.projectiles.append(BallisticProjectile(sprite, self.dmg, self.x, self.y, 2, closest_enemy, 0.17))
         # FIXME координаты вылета пули != x y, а зависят от них, скорость и ускорение - ??? (зависит от карты?)
 
 
 class GunTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
-        super().__init__(x, y, "enemy_in_range", enemy_list, "GunTower")
+        super().__init__(x, y, "enemy_in_range", enemy_list, "RGunTower1")
         self.cost = 15
         self.range = 75
         self.reload_time = 10
@@ -139,7 +175,7 @@ class GunTower(Tower):
 class BombTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
-        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "BombTower")
+        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "RBombTower1")
         self.cost = 25
         self.range = 60
         self.reload_time = 150
