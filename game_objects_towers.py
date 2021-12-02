@@ -8,7 +8,7 @@ from game_objects_projectiles import *
 
 
 class Tower:
-    def __init__(self, x, y, cause, enemy_list):
+    def __init__(self, x, y, cause, enemy_list, image_path):
         """
         Инициализация класса Tower (все возможные башни).
         У каждой есть своё положение на карте (x, y), причина срабатывания её действия (cause), стоимость её постройки
@@ -27,6 +27,14 @@ class Tower:
         self.charged_time = 0
         self.range = 0
         self.enemy_list = enemy_list
+
+        # for drawing
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
+
+        # for clicking
+        self.clicked = False
 
     def check_cause(self):
         """
@@ -76,11 +84,33 @@ class Tower:
         """
         pass
 
+    def draw(self, display):
+        """
+        Отрисовывает изображение башни на поверххности display
+        :param display: поверхност отрисовки
+        """
+        display.blit(self.image, (self.image_rect.x, self.image_rect.y))
+
+    def is_clicked(self):
+        """
+        Обработчик нажатия на башню
+        :return: флажок состояния кнопки, нажата или нет
+        """
+        action = False
+        pos = pygame.mouse.get_pos()
+        if self.image_rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] and not self.clicked:
+                self.clicked = True
+                action = True
+        if not pygame.mouse.get_pressed()[0]:
+            self.clicked = False
+        return action
+
 
 class ArrowTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - ArrowTower. Башня лучников выпускает стрелы """
-        super().__init__(x, y, "enemy_in_range", enemy_list)
+        super().__init__(x, y, "enemy_in_range", enemy_list, "Textures/ArcherTower.png")
         self.cost = 10
         self.range = 100
         self.reload_time = 40
@@ -95,7 +125,7 @@ class ArrowTower(Tower):
 class GunTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
-        super().__init__(x, y, "enemy_in_range", enemy_list)
+        super().__init__(x, y, "enemy_in_range", enemy_list, "Textures/TowerSpot.png")
         self.cost = 15
         self.range = 75
         self.reload_time = 10
@@ -109,7 +139,7 @@ class GunTower(Tower):
 class BombTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
-        super().__init__(x, y, "ground_enemy_in_range", enemy_list)
+        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "something")
         self.cost = 25
         self.range = 60
         self.reload_time = 150
@@ -125,7 +155,7 @@ class ChargingTower(Tower):
     """ Прототип башни с уроном, зависящем от времени простоя """
 
     def __init__(self, x, y, enemy_list):
-        super().__init__(x, y, "enemy_in_range", enemy_list)
+        super().__init__(x, y, "enemy_in_range", enemy_list, "something")
         self.cost = 25
         self.range = 100
         self.reload_time = 25

@@ -53,31 +53,12 @@ class Game:
                 self.playing = False
             self.display.fill(self.BLACK)
 
-            self.gaming()
+            self.level.draw()
 
             self.window.blit(self.display, (0, 0))
             pygame.display.update()
             self.reset_keys()
             self.clock.tick(self.FPS)
-
-    def gaming(self):  # FIXME: возможно будет перенесена целиком в main_loop
-        """
-        Отдельная функция непосредственно всех процессов, происходящих во время игры
-        """
-        self.level.draw()
-
-        for tower in self.towers:
-            tower.check_cause()
-
-        for opp in self.level.opponents:
-            opp.move_opponent((self.level_name.lower()).replace(' ', ''))
-            if opp.finished:
-                self.player_health -= opp.player_damage
-            if not opp.alive:
-                self.level.opponents.pop(self.level.opponents.index(opp))
-            for projectile in opp.projectiles:
-                projectile.move(self.display)
-            opp.draw(self.display)  # FIXME временно, для тестов
 
     def check_events(self):
         """

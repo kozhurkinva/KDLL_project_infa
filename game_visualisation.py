@@ -163,7 +163,7 @@ class LevelsMenu(Menu):
             self.game.playing = True
 
 
-class IngameMenu(Menu): #FIXME: здесь будет реализована игровая пауза
+class IngameMenu(Menu):  # FIXME: здесь будет реализована игровая пауза
     def __init__(self, game):
         Menu.__init__(self, game)
         self.pausex, self.pausey = self.mid_w, self.mid_h + 20
@@ -230,7 +230,7 @@ class CreditsMenu(Menu):
                 self.run_display = False
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text("Credits", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 20)
-            self.game.draw_text("Made bi me", 15, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 10)
+            self.game.draw_text("Made by me", 15, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 10)
             self.blit_screen()
 
 
@@ -244,16 +244,18 @@ class Level:
         :param screen: поверхность для отрисовки
         """
         self.opponents = []
-        self.level = level[-1]
+        self.towers = []
+        self.bullets = []
+
+        self.level = (level.lower()).replace(' ', '')[-1]
+
+        self.level_name = (level.lower()).replace(' ', '')
+
         self.screen = screen
 
-        self.ingame_towers = []
-
         self.background_img = pygame.image.load("Textures/Background" + self.level + ".png").convert_alpha()
-
         self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
         self.towerspot_rect = self.towerspot_img.get_rect()
-
         self.archertower_img = pygame.image.load("Textures/ArcherTower.png").convert_alpha()
         self.archertower_rect = self.archertower_img.get_rect()
 
@@ -269,21 +271,28 @@ class Level:
             design = level_design.readlines()[int(self.level)].split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-                click = Button(x, y, self.images[0], 1)
-                self.ingame_towers.append(click)
+                self.towers += [ArrowTower(x, y, self.opponents)]
 
-    def draw(self): # FIXME: добавить отрисовку остальных спрайтов, не только башен
+    def draw(self):
         """
         Отрисовка башен и обработка нажатия на них пользователя.
-        :return:
         """
         self.screen.blit(self.background_img, (0, 0))
-        for tower in self.ingame_towers:
-            if tower.is_pressed(self.screen):
-                tower.image = self.images[1]
+
+        for tower in self.towers:
+            tower.check_cause()
+            if tower.is_clicked():
+                pass
+            tower.draw(self.screen)
+
+        for opp in self.opponents:
+            opp.move_opponent(self.level_name)
+            for projectile in opp.projectiles:
+                projectile.move(self.screen)
+            opp.draw(self.screen)  # FIXME временно, для тестов
 
 
-class Button:
+class Button: # FIXME: возможно вообще уберем этот класс
     def __init__(self, x, y, image, scale):
         """
         Класс кнопки.
