@@ -91,7 +91,6 @@ class Game:
         :param size: размер текста
         :param x: x-положение левого верхнего угла поля с текстом
         :param y: y-положение левого верхнего угла поля с текстом
-        :return:
         """
         font = pygame.font.Font(self.font_name, size)
         text_surface = font.render(text, True, self.WHITE)

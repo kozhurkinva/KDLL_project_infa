@@ -234,6 +234,14 @@ class CreditsMenu(Menu):
             self.blit_screen()
 
 
+class ChooseTowerMenu(Menu):
+    def __init__(self, game):
+        Menu.__init__(self, game)
+
+    def display_menu(self):
+        pass
+
+
 class Level:
     def __init__(self, level, screen):
         """
@@ -254,13 +262,16 @@ class Level:
 
         self.screen = screen
 
-        self.background_img = pygame.image.load("levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
+        self.background_img = pygame.image.load(
+            "levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
+
         self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
         self.towerspot_rect = self.towerspot_img.get_rect()
+
         self.archertower_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
         self.archertower_rect = self.archertower_img.get_rect()
 
-        #self.images = [self.towerspot_img, self.archertower_img]
+        # self.images = [self.towerspot_img, self.archertower_img]
 
         # FIXME в будущем спавн будет работать по другому
         if self.level == "1":
@@ -272,7 +283,7 @@ class Level:
             design = level_design.read().split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-                self.towers += [BombTower(x, y, self.opponents)]
+                self.towers += [TowerSpot(x, y, self.opponents)]
 
     def draw(self):
         """
@@ -280,14 +291,38 @@ class Level:
         """
         self.screen.blit(self.background_img, (0, 0))
 
-        for tower in self.towers:
-            tower.check_cause()
-            if tower.is_clicked():
-                if self.player_money >= tower.upgrade_cost:
-                    self.player_money -= tower.upgrade_cost
-                    tower.upgrade()
-                print(self.player_money)
-            tower.draw(self.screen)
+        for i in range(len(self.towers)):
+            if self.towers[i].is_activate:
+                self.towers[i].check_cause()
+            if self.towers[i].is_clicked():
+                if self.towers[i].is_activate:
+                    if self.player_money >= self.towers[i].upgrade_cost:
+                        self.player_money -= self.towers[i].upgrade_cost
+                        self.towers[i].upgrade()
+                        print(self.player_money)
+                else:
+                    if self.player_money >= self.towers[i].cost:
+                        self.player_money -= self.towers[i].cost
+                        self.towers[i] = ArrowTower(self.towers[i].x, self.towers[i].y, self.towers[i].enemy_list)
+                        self.towers[i].is_activate = True
+                        print(self.player_money)
+            self.towers[i].draw(self.screen)
+
+        # for tower in self.towers:
+        #     if tower.is_activate:
+        #         tower.check_cause()
+        #     if tower.is_clicked():
+        #         if tower.is_activate:
+        #             if self.player_money >= tower.upgrade_cost:
+        #                 self.player_money -= tower.upgrade_cost
+        #                 tower.upgrade()
+        #                 print(self.player_money)
+        #         else:
+        #             if self.player_money >= tower.cost:
+        #                 self.player_money -= tower.cost
+        #                 tower = ArrowTower(tower.x, tower.y, tower.enemy_list)
+        #                 tower.is_activate = True
+        #     tower.draw(self.screen)
 
         for opp in self.opponents:
             if not opp.alive:

@@ -1,7 +1,7 @@
 import math
 import os.path as path
 
-import pygame.draw  # FIXME пока не доделан vis + мб не всё нужно импортить
+import pygame  # FIXME пока не доделан vis + мб не всё нужно импортить
 
 import game_constants as g_c
 
@@ -41,9 +41,8 @@ class Creature:
         img = pygame.image.load("Textures/" + str(type(self).__mro__[0].__name__) + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
         ''' рисует hp bar и его рамку '''
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp*self.alpha, 10))
-        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, self.hp_bar_limit*self.alpha, 10), 2)
-
+        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp * self.alpha, 10))
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, self.hp_bar_limit * self.alpha, 10), 2)
 
 
 class Opponent(Creature):
@@ -112,8 +111,8 @@ class Warrior(Opponent):
         self.dmg = 1
         self.speed = 1
         self.loot = 5
-        self.alpha = 7 # коэфициент для растяжения hp bar по длине изображения
-        self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
+        self.alpha = 7  # коэфициент для растяжения hp bar по длине изображения
+        self.hp_bar_limit = self.hp  # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
 
 
 class Bird(Opponent):
@@ -124,6 +123,6 @@ class Bird(Opponent):
         self.speed = 2
         self.loot = 7
         self.player_damage = 2
-        self.alpha = 8 # коэфициент для растяжения hp bar по длине изображения
-        self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
+        self.alpha = 8  # коэфициент для растяжения hp bar по длине изображения
+        self.hp_bar_limit = self.hp  # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
         self.types += ["flying"]

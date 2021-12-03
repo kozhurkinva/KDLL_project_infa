@@ -30,13 +30,16 @@ class Tower:
         self.enemy_list = enemy_list
         self.sprite = sprite
 
+        # for clicking and choosing a type of the tower
+        self.clicked = False
+        self.is_activate = False
+        self.default_image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+
         # for drawing
-        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        # self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image = self.default_image
         self.image_rect = self.image.get_rect()
         self.image_rect.topleft = (self.x, self.y)
-
-        # for clicking
-        self.clicked = False
 
     def check_cause(self):
         """
@@ -99,7 +102,7 @@ class Tower:
     def draw(self, display):
         """
         Отрисовывает изображение башни на поверххности display
-        :param display: поверхност отрисовки
+        :param display: поверхность отрисовки
         """
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
 
