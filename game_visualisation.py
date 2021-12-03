@@ -254,7 +254,7 @@ class Level:
 
         self.screen = screen
 
-        self.background_img = pygame.image.load("Textures/Background" + self.level + ".png").convert_alpha()
+        self.background_img = pygame.image.load("levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
         self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
         self.towerspot_rect = self.towerspot_img.get_rect()
         self.archertower_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
