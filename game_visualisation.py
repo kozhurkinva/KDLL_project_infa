@@ -260,7 +260,7 @@ class Level:
         self.archertower_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
         self.archertower_rect = self.archertower_img.get_rect()
 
-        self.images = [self.towerspot_img, self.archertower_img]
+        #self.images = [self.towerspot_img, self.archertower_img]
 
         # FIXME в будущем спавн будет работать по другому
         if self.level == "1":
@@ -272,7 +272,7 @@ class Level:
             design = level_design.read().split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-                self.towers += [ArrowTower(x, y, self.opponents)]
+                self.towers += [BombTower(x, y, self.opponents)]
 
     def draw(self):
         """
