@@ -64,7 +64,7 @@ for i in range(len(move_trajectory) - 1):
                       (move_trajectory[i][1] + 0.5) * rect_size[1]),
                      ((move_trajectory[i + 1][0] + 0.5) * rect_size[0],
                       (move_trajectory[i + 1][1] + 0.5) * rect_size[1]), width)
-pygame.image.save(image, "maps/new/image_" + file_name[0:-4] + ".png")
+pygame.image.save(image, "new/image_" + file_name[0:-4] + ".png")
 
 # перенос данных из массива координат в двухмерный конечный массив
 if len(move_trajectory) >= 2:
@@ -77,11 +77,11 @@ if len(move_trajectory) >= 2:
 map_info[move_trajectory[-1][0]][move_trajectory[-1][1]] = "stop"
 map_info += [[(move_trajectory[0][0] + 0.5) * rect_size[0], (move_trajectory[0][1] + 0.5) * rect_size[1]]]
 # сохранение данных
-with open("maps/new/" + file_name, "w") as file:
+with open("new/" + file_name, "w") as file:
     file.write(str(trajectory_length) + " ")
     file.write("\n")
     for line in map_info:
         for an in line:
             file.write(str(an) + " ")
         file.write("\n")
-pygame.image.save(screen, "maps/new/" + file_name + "_plan.png")  # FIXME нужно сохранять этот файл?
+pygame.image.save(screen, "new/" + file_name + "_plan.png")  # FIXME нужно сохранять этот файл?

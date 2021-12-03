@@ -268,8 +268,8 @@ class Level:
         elif self.level == "2":
             self.opponents += [Bird("alpha")]
 
-        with open("level_designs.txt", "r") as level_design:
-            design = level_design.readlines()[int(self.level)].split()
+        with open("levels/level" + str(self.level) + "/design.txt", "r") as level_design:
+            design = level_design.read().split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
                 self.towers += [ArrowTower(x, y, self.opponents)]
