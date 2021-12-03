@@ -127,3 +127,6 @@ class Bird(Opponent):
         self.alpha = 8 # коэфициент для растяжения hp bar по длине изображения
         self.hp_bar_limit = self.hp # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
         self.types += ["flying"]
+
+
+OPPONENT_CLASSES_LIST = (Opponent, Warrior, Bird)
