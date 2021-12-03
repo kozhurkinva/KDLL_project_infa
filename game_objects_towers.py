@@ -42,6 +42,7 @@ class Tower:
         """
         Проверяет выполнение личного условия башни, изменяет в связи с этим флаг ready_for_action.
         Возможные условия:
+        never_ready - башня никогда не активирует self.action()
         always_ready - готова работать вне зависимости от внешних условий и нуждается лишь во времени на перезарядку
         enemy_in_range - враг находится в радиусе поражения башни
         *_enemy_in_range - особый подвид врага * (определяется через его type) находится в радиусе поражения башни
@@ -52,7 +53,9 @@ class Tower:
         closest_enemy = None
         self.charged_time += 1  # reloading
         self.ready_for_action = False
-        if self.cause == "always_ready":
+        if self.cause == "never_ready":
+            pass
+        elif self.cause == "always_ready":
             self.ready_for_action = True
         elif self.cause == "enemy_in_range":
             closest_enemy = None
@@ -116,6 +119,11 @@ class Tower:
         return action
 
 
+class TowerSpot(Tower):
+    def __init__(self, x, y, enemy_list):
+        super().__init__(x, y, "never_ready", enemy_list, "TowerSpot")
+
+
 class ArrowTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - ArrowTower. Башня лучников выпускает стрелы """
@@ -128,7 +136,8 @@ class ArrowTower(Tower):
         self.dmg = 2
 
     def upgrade(self):
-        """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт) """
+        """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
+        self.charged_time = 0
         if self.level == 1:
             self.upgrade_cost = 35
             self.sprite = self.sprite[0] + "ArrowTower2"
@@ -154,14 +163,14 @@ class ArrowTower(Tower):
         else:
             sprite = "LArrow"
             self.relocate("L")
-        closest_enemy.projectiles.append(BallisticProjectile(sprite, self.dmg, self.x, self.y, 2, closest_enemy, 0.17))
+        closest_enemy.projectiles.append(BallisticProjectile(sprite, self.dmg, self.x, self.y, 3, closest_enemy, 0.17))
         # FIXME координаты вылета пули != x y, а зависят от них, скорость и ускорение - ??? (зависит от карты?)
 
 
 class GunTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
-        super().__init__(x, y, "enemy_in_range", enemy_list, "RGunTower1")
+        super().__init__(x, y, "enemy_in_range", enemy_list, "LGunTower1")
         self.cost = 15
         self.range = 75
         self.reload_time = 10
@@ -175,29 +184,63 @@ class GunTower(Tower):
 class BombTower(Tower):
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
-        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "RBombTower1")
+        super().__init__(x, y, "ground_enemy_in_range", enemy_list, "LBombTower1")
         self.cost = 25
+        self.upgrade_cost = 30
         self.range = 60
         self.reload_time = 150
         self.dmg = 10
 
+    def upgrade(self):
+        """ Улучшение башни подрывников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
+        self.charged_time = 0
+        if self.level == 1:
+            self.upgrade_cost = 35
+            self.sprite = self.sprite[0] + "BombTower2"
+            self.range = 70
+            self.reload_time = 140
+            self.dmg = 12
+        elif self.level == 2:
+            self.upgrade_cost = 50
+            self.sprite = self.sprite[0] + "BombTower3"
+            self.range = 80
+            self.reload_time = 130
+            self.dmg = 15
+        self.level += 1
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
+
     def action(self, closest_enemy):
-        """ Выпускает бомбу в closest_enemy (наносит урон по площади) """
+        """ Выпускает бомбу в closest_enemy (наносит урон по площади), меняет ориентацию при нужде """
+        if closest_enemy.x > self.x:
+            self.relocate("R")
+        else:
+            self.relocate("L")
         closest_enemy.projectiles.append(
             BombProjectile("Bomb", self.dmg, self.x, self.y, 2, closest_enemy, 0.17, self.enemy_list))
 
 
-class ChargingTower(Tower):
+class GlowTower(Tower):
     """ Прототип башни с уроном, зависящем от времени простоя """
 
     def __init__(self, x, y, enemy_list):
-        super().__init__(x, y, "enemy_in_range", enemy_list, "something")
+        super().__init__(x, y, "enemy_in_range", enemy_list, "1GlowTower1")
         self.cost = 25
+        self.upgrade_cost = 30
         self.range = 100
         self.reload_time = 25
         self.dmg = 1
+        self.dmg_up = 1  # коэффициент, на который умножается кол-во секунд простоя
+
+    def glow_up(self):
+        pass
 
     def action(self, closest_enemy):
+        """
+        Выпускает снаряд-свечение, урон которого зависит от self.charged_time
+        (каждую секунду простоя урон увеличивается на 1)
+        """
         closest_enemy.projectiles.append(
-            StraightProjectile("Arrow", self.dmg + (self.charged_time - self.reload_time) / 60, self.x, self.y, 1,
-                               closest_enemy))
+            StraightProjectile("Glow", self.dmg + self.dmg_up * (self.charged_time - self.reload_time) / 60, self.x,
+                               self.y, 1, closest_enemy))
