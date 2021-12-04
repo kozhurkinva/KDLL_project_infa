@@ -53,6 +53,7 @@ class Tower:
         В случае выполнения личного условия срабатывания и прохождения достаточного для перезарядки времени, функция
         вызывает срабатывание особого для башни действия (action).
         """
+        self.glow_up()
         closest_enemy = None
         self.charged_time += 1  # reloading
         self.ready_for_action = False
@@ -83,6 +84,10 @@ class Tower:
             self.action(closest_enemy)
             self.charged_time = 0
             self.ready_for_action = False
+
+    def glow_up(self):
+        """ Функция для возможного изменения характеристик или внешнего вида башен в зависимости от внешних факторов"""
+        pass
 
     def action(self, potential_closest_enemy_or_some_other_variable_from_checker):
         """
@@ -225,25 +230,60 @@ class BombTower(Tower):
 
 
 class GlowTower(Tower):
-    """ Прототип башни с уроном, зависящем от времени простоя """
+    """ Инициализация подкласса Tower - GlowTower. Светящаяся башня выпускает усиленные временем снаряды """
 
     def __init__(self, x, y, enemy_list):
         super().__init__(x, y, "enemy_in_range", enemy_list, "1GlowTower1")
         self.cost = 25
         self.upgrade_cost = 30
         self.range = 100
-        self.reload_time = 25
-        self.dmg = 1
+        self.reload_time = 100
+        self.dmg = 2
         self.dmg_up = 1  # коэффициент, на который умножается кол-во секунд простоя
 
     def glow_up(self):
-        pass
+        """ Изменяет внешний вид маяка в зависимости от времени простоя """
+        if self.charged_time > 3 * self.reload_time:
+            self.sprite = "4" + self.sprite[1:]
+        elif self.charged_time > 2 * self.reload_time:
+            self.sprite = "3" + self.sprite[1:]
+        elif self.charged_time > self.reload_time:
+            self.sprite = "2" + self.sprite[1:]
+        else:
+            self.sprite = "1" + self.sprite[1:]
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
+
+    def upgrade(self):
+        """ Улучшение светящуюся башню (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
+        self.charged_time = 0
+        if self.level == 1:
+            self.upgrade_cost = 35
+            self.sprite = "1GlowTower2"
+            self.range = 100
+            self.reload_time = 110
+            self.dmg = 1
+            self.dmg_up = 1.1
+        elif self.level == 2:
+            self.upgrade_cost = 50
+            self.sprite = "1GlowTower3"
+            self.range = 110
+            self.reload_time = 100
+            self.dmg_up = 1.25
+        self.level += 1
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
 
     def action(self, closest_enemy):
         """
         Выпускает снаряд-свечение, урон которого зависит от self.charged_time
-        (каждую секунду простоя урон увеличивается на 1)
+        (каждую секунду простоя урон увеличивается на 1, но не больше, чем на 2 * self.reload_time)
         """
+        if self.charged_time > 3 * self.reload_time:
+            self.charged_time = 3 * self.reload_time
         closest_enemy.projectiles.append(
-            StraightProjectile("Glow", self.dmg + self.dmg_up * (self.charged_time - self.reload_time) / 60, self.x,
-                               self.y, 1, closest_enemy))
+            StraightProjectile(self.sprite[0] + "Glow",
+                               self.dmg + self.dmg_up * (self.charged_time - self.reload_time) / 60, self.x, self.y, 1,
+                               closest_enemy))
