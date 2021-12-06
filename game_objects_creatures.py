@@ -56,10 +56,11 @@ class Creature:
         if enemy == 0:
             self.occupied = False
         elif (self.x - enemy.x) ** 2 + (self.y - enemy.y) ** 2 <= 3600 and not self.occupied:
-            self.occupied = True
-            enemy.occupied = True
-            self.take_damage(enemy.dmg)
-            enemy.take_damage(self.dmg)
+            if "flying" not in self.types:
+                self.occupied = True
+                enemy.occupied = True
+                self.take_damage(enemy.dmg)
+                enemy.take_damage(self.dmg)
 
 
 class Ally(Creature):
