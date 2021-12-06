@@ -249,6 +249,7 @@ class Level:
         self.player_money = 70
         self.opponents = []
         self.towers = []
+        self.allys = [Blue(200, 200)]
 
         self.level = (level.lower()).replace(' ', '')[-1]
 
@@ -314,6 +315,8 @@ class Level:
         #     tower.draw(self.screen)
 
         for opp in self.opponents:
+            for al in ([0] + self.allys):
+                opp.fight(al)
             if not opp.alive:
                 self.opponents.pop(self.opponents.index(opp))
                 self.player_money += opp.loot
@@ -324,6 +327,13 @@ class Level:
             for projectile in opp.projectiles:
                 projectile.move(self.screen)
             opp.draw(self.screen)  # FIXME временно, для тестов
+
+        for al in self.allys:
+            if not al.alive:
+                self.allys.pop(self.allys.index(al))
+            for projectile in al.projectiles:
+                projectile.move(self.screen)
+            al.draw(self.screen)
 
 
 class Button:  # FIXME: возможно вообще уберем этот класс

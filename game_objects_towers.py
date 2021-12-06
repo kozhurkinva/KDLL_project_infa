@@ -186,7 +186,13 @@ class GunTower(Tower):
 
     def action(self, closest_enemy):
         """ Выпускает пулю в closest_enemy """
-        closest_enemy.projectiles.append(StraightProjectile("Bullet", self.dmg, self.x, self.y, 5, closest_enemy))
+        if closest_enemy.x > self.x:
+            sprite = "RBullet"
+            self.relocate("R")
+        else:
+            sprite = "LBullet"
+            self.relocate("L")
+        closest_enemy.projectiles.append(StraightProjectile(sprite, self.dmg, self.x, self.y, 5, closest_enemy))
 
 
 class BombTower(Tower):
@@ -264,13 +270,13 @@ class GlowTower(Tower):
             self.range = 100
             self.reload_time = 110
             self.dmg = 1
-            self.dmg_up = 1.1
+            self.dmg_up = 1.2
         elif self.level == 2:
             self.upgrade_cost = 50
             self.sprite = "1GlowTower3"
             self.range = 110
             self.reload_time = 100
-            self.dmg_up = 1.25
+            self.dmg_up = 1.4
         self.level += 1
         self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
