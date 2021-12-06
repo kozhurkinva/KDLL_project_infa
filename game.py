@@ -1,5 +1,7 @@
 import ctypes
 
+import pygame.mixer
+
 from game_visualisation import *
 from game_objects_creatures import *
 from game_objects_towers import *
@@ -19,18 +21,23 @@ class Game:
         self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255)
         self.FPS = 60
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
-        self.playing, self.running = False, True
+        self.playing, self.running = False, True,
         self.display = pygame.Surface((self.WIDTH, self.HEIGHT))
         self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         self.font_name = pygame.font.get_default_font()
         self.clock = pygame.time.Clock()
 
-        # Game variables
+        # Sounds
+        self.background_sound = pygame.mixer.Sound("background.wav")
+
+        # Game variables and counters
         self.level_name = 0
         self.tower_types = [0] * 999
         self.towers = []
         # self.opponents = []
         self.bullets = []
+        self.press_count = 0
+        self.is_paused = False
 
         # Level object
         self.level = None
@@ -48,11 +55,26 @@ class Game:
         """
         while self.playing:
             self.check_events()
-            if self.START_KEY:
-                self.playing = False
+            if self.BACK_KEY:
+                self.press_count += 1
+                if self.press_count == 1:
+                    self.is_paused = True
+                elif self.press_count == 2:
+                    self.press_count = 0
+                    self.is_paused = False
+                    self.playing = False
+            elif self.START_KEY:
+                if self.press_count == 1:
+                    self.is_paused = False
+
             self.display.fill(self.BLACK)
 
-            self.level.draw()
+            if not self.is_paused:
+                self.level.draw()
+                # self.background_sound.play(True)
+            else:
+                # self.background_sound.stop()
+                self.draw_text("Pause", 30, self.mid_w, self.mid_h)
 
             self.window.blit(self.display, (0, 0))
             pygame.display.update()

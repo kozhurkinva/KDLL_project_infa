@@ -163,12 +163,6 @@ class LevelsMenu(Menu):
             self.game.playing = True
 
 
-class IngameMenu(Menu):  # FIXME: здесь будет реализована игровая пауза
-    def __init__(self, game):
-        Menu.__init__(self, game)
-        self.pausex, self.pausey = self.mid_w, self.mid_h + 20
-
-
 class OptionsMenu(Menu):
     def __init__(self, game):
         """
@@ -265,19 +259,14 @@ class Level:
         self.background_img = pygame.image.load(
             "levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
 
-        self.towerspot_img = pygame.image.load("Textures/TowerSpot.png").convert_alpha()
-        self.towerspot_rect = self.towerspot_img.get_rect()
-
-        self.archertower_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
-        self.archertower_rect = self.archertower_img.get_rect()
-
-        # self.images = [self.towerspot_img, self.archertower_img]
 
         # FIXME в будущем спавн будет работать по другому
-        if self.level == "1":
+        if self.level == '1':
             self.opponents += [Warrior("alpha"), Warrior("beta")]
-        elif self.level == "2":
+        elif self.level == '2':
             self.opponents += [Bird("alpha")]
+        elif self.level == '3':
+            pass
 
         with open("levels/level" + str(self.level) + "/design.txt", "r") as level_design:
             design = level_design.read().split()
@@ -303,7 +292,7 @@ class Level:
                 else:
                     if self.player_money >= self.towers[i].cost:
                         self.player_money -= self.towers[i].cost
-                        self.towers[i] = ArrowTower(self.towers[i].x, self.towers[i].y, self.towers[i].enemy_list)
+                        self.towers[i] = GlowTower(self.towers[i].x, self.towers[i].y, self.towers[i].enemy_list)
                         self.towers[i].is_activate = True
                         print(self.player_money)
             self.towers[i].draw(self.screen)
