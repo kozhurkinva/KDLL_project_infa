@@ -260,6 +260,18 @@ class Level:
         self.background_img = pygame.image.load(
             "levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
 
+        # Временно!
+        self.WIDTH, self.HEIGHT = 800, 600
+        self.mid_h, self.mid_w = self.HEIGHT / 2, self.WIDTH / 2
+        self.choosing_buttons = [
+            Button(self.mid_h, self.mid_w, pygame.image.load("Textures/RArrowTower1.png"), 0.8),
+            Button(self.mid_h + 50, self.mid_w, pygame.image.load("Textures/RBombTower1.png"), 0.8),
+            Button(self.mid_h + 100, self.mid_w, pygame.image.load("Textures/1GlowTower1.png"), 0.8)
+        ]
+        self.is_choose = False
+        self.choose_menu_state = False
+        # self.was_clicked = False
+        self.tmp = None
 
         # FIXME в будущем спавн будет работать по другому
         if self.level == '1':
@@ -284,35 +296,62 @@ class Level:
         for i in range(len(self.towers)):
             if self.towers[i].is_activate:
                 self.towers[i].check_cause()
-            if self.towers[i].is_clicked():
-                if self.towers[i].is_activate:
+
+            # self.towers[i].is_clicked()
+            #
+            # # Updating
+            # if self.towers[i].is_pressed and self.towers[i].is_activate and not self.choose_menu_state:
+            #     if self.player_money >= self.towers[i].upgrade_cost:
+            #         self.player_money -= self.towers[i].upgrade_cost
+            #         self.towers[i].upgrade()
+            #         print(self.player_money)
+            #     else:
+            #         print("You haven't got a money")
+            #
+            # # Choosing
+            # if self.towers[i].is_pressed and not self.towers[i].is_activate or self.choose_menu_state:
+            #     self.choose_menu_state = True
+            #     self.tmp = i
+            #     for tower_img in self.choosing_buttons:
+            #         if tower_img.is_pressed():
+            #             if self.player_money >= self.towers[self.tmp].cost:
+            #                 self.towers[self.tmp] = ArrowTower(self.towers[self.tmp].x, self.towers[self.tmp].y, self.towers[self.tmp].enemy_list)
+            #                 self.towers[self.tmp].is_activated = True
+            #                 self.choose_menu_state = False
+            #                 self.tmp = None
+            #             else:
+            #                 self.towers[self.tmp].is_activate = False
+            #                 self.choose_menu_state = False
+            #                 self.tmp = None
+            #                 print("You haven't got a money")
+            #         tower_img.draw(self.screen)
+
+            self.towers[i].is_clicked()
+
+            if self.towers[i].is_pressed or self.choose_menu_state:
+                if self.towers[i].is_activate and not self.choose_menu_state:
                     if self.player_money >= self.towers[i].upgrade_cost:
                         self.player_money -= self.towers[i].upgrade_cost
                         self.towers[i].upgrade()
                         print(self.player_money)
-                else:
-                    if self.player_money >= self.towers[i].cost:
-                        self.player_money -= self.towers[i].cost
-                        self.towers[i] = GlowTower(self.towers[i].x, self.towers[i].y, self.towers[i].enemy_list)
-                        self.towers[i].is_activate = True
-                        print(self.player_money)
-            self.towers[i].draw(self.screen)
+                    else:
+                        print("You haven't got a money")
+                elif not self.towers[i].is_activate:
+                    self.choose_menu_state = True
+                    for tower_img in self.choosing_buttons:
+                        if tower_img.is_pressed():
+                            if self.player_money >= self.towers[i].cost:
+                                self.towers[i] = ArrowTower(self.towers[i].x, self.towers[i].y,
+                                                            self.towers[i].enemy_list)
+                                self.towers[i].is_activate = True
+                                self.choose_menu_state = False
+                            else:
+                                self.towers[i].is_activate = True
+                                self.choose_menu_state = False
+                                print("You haven't got a money")
+                        tower_img.draw(self.screen)
 
-        # for tower in self.towers:
-        #     if tower.is_activate:
-        #         tower.check_cause()
-        #     if tower.is_clicked():
-        #         if tower.is_activate:
-        #             if self.player_money >= tower.upgrade_cost:
-        #                 self.player_money -= tower.upgrade_cost
-        #                 tower.upgrade()
-        #                 print(self.player_money)
-        #         else:
-        #             if self.player_money >= tower.cost:
-        #                 self.player_money -= tower.cost
-        #                 tower = ArrowTower(tower.x, tower.y, tower.enemy_list)
-        #                 tower.is_activate = True
-        #     tower.draw(self.screen)
+            self.towers[i].draw(self.screen)
 
         for opp in self.opponents:
             for al in ([0] + self.allys):
@@ -353,7 +392,7 @@ class Button:  # FIXME: возможно вообще уберем этот кл
         self.rect.topleft = (x, y)
         self.clicked = False
 
-    def is_pressed(self, surface):
+    def is_pressed(self):
         """
         Обработчик нажатия на кнопку, а также отрисовщик кнопки.
         :param surface: поверхность отрисовки
@@ -370,6 +409,7 @@ class Button:  # FIXME: возможно вообще уберем этот кл
         if not pygame.mouse.get_pressed()[0]:
             self.clicked = False
 
-        surface.blit(self.image, (self.rect.x, self.rect.y))
-
         return action
+
+    def draw(self, surface):
+        surface.blit(self.image, (self.rect.x, self.rect.y))

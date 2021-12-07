@@ -66,14 +66,13 @@ class Game:
             elif self.START_KEY:
                 if self.press_count == 1:
                     self.is_paused = False
+                    self.press_count = 0
 
             self.display.fill(self.BLACK)
 
             if not self.is_paused:
                 self.level.draw()
-                # self.background_sound.play(True)
             else:
-                # self.background_sound.stop()
                 self.draw_text("Pause", 30, self.mid_w, self.mid_h)
 
             self.window.blit(self.display, (0, 0))

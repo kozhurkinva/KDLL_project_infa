@@ -33,6 +33,7 @@ class Tower:
         # for clicking and choosing a type of the tower
         self.clicked = False
         self.is_activate = False
+        self.is_pressed = False
         self.default_image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
 
         # for drawing
@@ -116,15 +117,15 @@ class Tower:
         Обработчик нажатия на башню
         :return: флажок состояния кнопки, нажата или нет
         """
-        action = False
+        self.is_pressed = False
         pos = pygame.mouse.get_pos()
+
         if self.image_rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] and not self.clicked:
                 self.clicked = True
-                action = True
+                self.is_pressed = True
         if not pygame.mouse.get_pressed()[0]:
             self.clicked = False
-        return action
 
 
 class TowerSpot(Tower):
