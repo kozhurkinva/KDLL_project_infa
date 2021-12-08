@@ -112,7 +112,7 @@ class Tower:
         """
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
 
-    def is_clicked(self):
+    def pressing(self):
         """
         Обработчик нажатия на башню
         :return: флажок состояния кнопки, нажата или нет
@@ -131,6 +131,11 @@ class Tower:
 class TowerSpot(Tower):
     def __init__(self, x, y, enemy_list):
         super().__init__(x, y, "never_ready", enemy_list, "TowerSpot")
+        self.cost = 0
+        self.upgrade_cost = 0
+
+    def upgrade(self):
+        pass
 
 
 class ArrowTower(Tower):
