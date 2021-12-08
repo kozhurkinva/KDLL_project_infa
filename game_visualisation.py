@@ -38,8 +38,6 @@ class MainMenu(Menu):
         self.exitx, self.exity = self.mid_w, self.mid_h + 110
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
 
-
-
     def display_menu(self):
         """
         Отображает меню на экране
@@ -53,7 +51,7 @@ class MainMenu(Menu):
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text("Maaaain Menu", 50, self.mid_w, self.mid_h - 50)
             self.game.draw_text("Start Game", 20, self.startx, self.starty)
-            self.game.draw_text("Options", 20, self.optionsx, self.optionsy)
+            self.game.draw_text("Volume", 20, self.optionsx, self.optionsy)
             self.game.draw_text("Credits", 20, self.creditsx, self.creditsy)
             self.game.draw_text("Exit", 40, self.exitx, self.exity)
             self.draw_cursor()
@@ -66,8 +64,8 @@ class MainMenu(Menu):
         if self.game.DOWN_KEY:
             if self.state == "Start Game":
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
-                self.state = "Options"
-            elif self.state == "Options":
+                self.state = "Volume"
+            elif self.state == "Volume":
                 self.cursor_rect.midtop = (self.creditsx + self.offset, self.creditsy)
                 self.state = "Credits"
             elif self.state == "Credits":
@@ -80,12 +78,12 @@ class MainMenu(Menu):
             if self.state == "Start Game":
                 self.cursor_rect.midtop = (self.exitx + self.offset, self.exity)
                 self.state = "Exit"
-            elif self.state == "Options":
+            elif self.state == "Volume":
                 self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
                 self.state = "Start Game"
             elif self.state == "Credits":
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
-                self.state = "Options"
+                self.state = "Volume"
             elif self.state == "Exit":
                 self.cursor_rect.midtop = (self.creditsx + self.offset, self.creditsy)
                 self.state = "Credits"
@@ -99,8 +97,8 @@ class MainMenu(Menu):
         if self.game.START_KEY:
             if self.state == "Start Game":
                 self.game.curr_menu = self.game.levels
-            elif self.state == "Options":
-                self.game.curr_menu = self.game.options
+            elif self.state == "Volume":
+                self.game.curr_menu = self.game.volume_set
             elif self.state == "Credits":
                 self.game.curr_menu = self.game.credits
             elif self.state == "Exit":
@@ -114,7 +112,6 @@ class MainMenu(Menu):
         """
         pygame.mixer.music.load("angrybirds.mp3")
         pygame.mixer.music.play(-1)
-
 
 
 class LevelsMenu(Menu):
@@ -176,7 +173,7 @@ class LevelsMenu(Menu):
             self.game.playing = True
 
 
-class OptionsMenu(Menu):
+class VolumeMenu(Menu):
     def __init__(self, game):
         """
         Меню настроек.
@@ -185,10 +182,9 @@ class OptionsMenu(Menu):
         :param game: объект основного класса Game
         """
         Menu.__init__(self, game)
-        self.state = "Volume"
-        self.volx, self.voly = self.mid_w, self.mid_h + 20
-        self.controlsx, self.controlsy = self.mid_w, self.mid_h + 40
-        self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+        self.volume_state = 0
+        self.barx, self.bary = self.mid_w, self.mid_h + 20
+        # self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
 
     def display_menu(self):
         self.run_display = True
@@ -196,9 +192,8 @@ class OptionsMenu(Menu):
             self.game.check_events()
             self.check_input()
             self.game.display.fill((0, 0, 0))
-            self.game.draw_text("Options", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 30)
-            self.game.draw_text("Volume", 15, self.volx, self.voly)
-            self.game.draw_text("Controls", 15, self.controlsx, self.controlsy)
+            self.game.draw_text("Volume", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 30)
+            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 50, 50))
             self.draw_cursor()
             self.blit_screen()
 
@@ -206,16 +201,10 @@ class OptionsMenu(Menu):
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
-        elif self.game.UP_KEY or self.game.DOWN_KEY:
-            if self.state == "Volume":
-                self.state = "Controls"
-                self.cursor_rect.midtop = (self.controlsx + self.offset, self.controlsy)
-            elif self.state == "Controls":
-                self.state = "Volume"
-                self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
-        elif self.game.START_KEY:
-            # FIXME: сделать меню для Controls и Volume
-            pass
+        elif self.game.UP_KEY:
+            self.volume_state += 0.1
+        elif self.game.DOWN_KEY:
+            self.volume_state -= 0.1
 
 
 class CreditsMenu(Menu):
@@ -265,7 +254,6 @@ class Level:
         self.background_img = pygame.image.load(
             "levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
 
-        # Временно!
         self.WIDTH, self.HEIGHT = 800, 600
         self.mid_h, self.mid_w = self.HEIGHT / 2, self.WIDTH / 2
         self.choosing_buttons = {
@@ -413,6 +401,7 @@ class Level:
     def draw_text(self, text, color, size, x, y):
         """
         Универсальная функция отрисовки текста
+        :param color: цвет текста
         :param text: то, что будет напечатано
         :param size: размер текста
         :param x: x-положение левого верхнего угла поля с текстом
@@ -442,7 +431,6 @@ class Level:
             if num_wave_opp == 0:   # если эта волна кончилась, запускается следующая
                 self.wave += 1
                 self.wave_timer = 0
-
 
 
 class Button:  # FIXME: возможно вообще уберем этот класс

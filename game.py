@@ -46,12 +46,10 @@ class Game:
 
         # Menus
         self.main_menu = MainMenu(self)
-        self.options = OptionsMenu(self)
+        self.volume_set = VolumeMenu(self)
         self.credits = CreditsMenu(self)
         self.levels = LevelsMenu(self)
         self.curr_menu = self.main_menu
-
-
 
     def main_loop(self):
         """
