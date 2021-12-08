@@ -46,8 +46,8 @@ class Creature:
         img = pygame.image.load("Textures/" + str(type(self).__mro__[0].__name__) + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
         ''' рисует hp bar и его рамку '''
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp * self.alpha, 10))
-        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, self.hp_bar_limit * self.alpha, 10), 2)
+        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp/self.alpha * 75, 15))
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, 75, 15), 3)
 
     def fight(self, enemy):
         """
@@ -75,6 +75,7 @@ class Blue(Ally):
         super().__init__(x, y)
         self.dmg = 0.1
         self.hp = 100
+        self.alpha = 100
 
 
 class Opponent(Creature):
@@ -142,7 +143,7 @@ class Warrior(Opponent):
         self.dmg = 1
         self.speed = 1
         self.loot = 5
-        self.alpha = 7  # коэфициент для растяжения hp bar по длине изображения
+        self.alpha = 12  # коэфициент для растяжения hp bar по длине изображения
 
 
 class Bird(Opponent):
