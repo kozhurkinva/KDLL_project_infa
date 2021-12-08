@@ -5,6 +5,7 @@ import pygame.mixer
 from game_visualisation import *
 from game_objects_creatures import *
 from game_objects_towers import *
+from game_menus import *
 
 
 class Game:
