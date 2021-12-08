@@ -266,13 +266,17 @@ class Level:
 
         self.text_color = (0, 0, 0)
 
-        # FIXME в будущем спавн будет работать по другому
-        if self.level == '1':
-            self.opponents += [Warrior("alpha"), Warrior("beta")]
-        elif self.level == '2':
-            self.opponents += [Bird("alpha")]
-        elif self.level == '3':
-            pass
+        # список противников в волнах
+        self.wave_timer = 0
+        self.wave = 0
+        with open("levels/level" + str(self.level) + "/spawn_list.txt", "r") as spawn_list:
+            self.spawn_list = spawn_list.read()[:-1].split("\nwave\n")
+            for wave_number in range(len(self.spawn_list)):
+                self.spawn_list[wave_number] = self.spawn_list[wave_number].split("\n")
+                for opp_number in range(len(self.spawn_list[wave_number])):
+                    self.spawn_list[wave_number][opp_number] = self.spawn_list[wave_number][opp_number].split()
+                    self.spawn_list[wave_number][opp_number][0] = int(self.spawn_list[wave_number][opp_number][0])
+                    self.spawn_list[wave_number][opp_number][3] = int(self.spawn_list[wave_number][opp_number][3])
 
         with open("levels/level" + str(self.level) + "/design.txt", "r") as level_design:
             design = level_design.read().split()
@@ -371,6 +375,7 @@ class Level:
                     self.choosing_buttons["Glow"].draw(self.screen)
             self.towers[i].draw(self.screen)
 
+        self.spawn_opp()
         for opp in self.opponents:
             for al in ([0] + self.allys):
                 opp.fight(al)
@@ -406,6 +411,25 @@ class Level:
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
+
+    def spawn_opp(self):
+        """
+        функция, создающая противников в обозначенном в self.spawn_list порядке
+        """
+        if self.wave < len(self.spawn_list):
+            num_wave_opp = 0    # считает, сколько противников появится в этой волне
+            for i in range(len(self.spawn_list[self.wave])):
+                if (not self.wave_timer % self.spawn_list[self.wave][i][3]) and (self.spawn_list[self.wave][i][0] > 0):
+                    self.spawn_list[self.wave][i][0] -= 1
+                    for opp in OPPONENT_CLASSES_LIST:
+                        if opp.__name__ == self.spawn_list[self.wave][i][1]:
+                            self.opponents += [opp(self.spawn_list[self.wave][i][2])]
+                num_wave_opp += self.spawn_list[self.wave][i][0]
+            self.wave_timer += 1
+            if num_wave_opp == 0:   # если эта волна кончилась, запускается следующая
+                self.wave += 1
+                self.wave_timer = 0
+
 
 
 class Button:  # FIXME: возможно вообще уберем этот класс
