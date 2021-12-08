@@ -180,7 +180,7 @@ class VolumeMenu(Menu):
         """
         Menu.__init__(self, game)
         self.volume_state = 0.5
-        self.barx, self.bary = self.mid_w - 100, self.mid_h + 20
+        self.barx, self.bary = self.mid_w - 200, self.mid_h + 20
         # self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
 
     def display_menu(self):
@@ -190,8 +190,8 @@ class VolumeMenu(Menu):
             self.check_input()
             self.game.display.fill((0, 0, 0))
             self.game.draw_text("Volume", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 30)
-            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 200, 50), 3)
-            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, self.volume_state * 200, 50))
+            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 400, 50), 3)
+            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, self.volume_state * 400, 50))
             pygame.mixer.music.set_volume(self.volume_state)
             self.draw_cursor()
             self.blit_screen()
@@ -201,9 +201,15 @@ class VolumeMenu(Menu):
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
         elif self.game.UP_KEY:
-            self.volume_state += 0.1
+            if self.volume_state < 0.9:
+                self.volume_state += 0.1
+            else:
+                pass
         elif self.game.DOWN_KEY:
-            self.volume_state -= 0.1
+            if self.volume_state > 0.1:
+                self.volume_state -= 0.1
+            else:
+                pass
 
 
 class CreditsMenu(Menu):
