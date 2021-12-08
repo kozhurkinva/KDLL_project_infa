@@ -43,9 +43,8 @@ class MainMenu(Menu):
         Отображает меню на экране
         """
         self.run_display = True
-        #self.play_main_theme()
+        self.play_main_theme()
         while self.run_display:
-            self.play_main_theme()
             self.game.check_events()
             self.check_input()
             self.game.display.fill(self.game.BLACK)
@@ -110,7 +109,7 @@ class MainMenu(Menu):
         """
         Воспроизведение музыки в игре
         """
-        pygame.mixer.music.load("angrybirds.mp3")
+        game_sound = pygame.mixer.music.load("angrybirds.mp3")
         pygame.mixer.music.play(-1)
 
 
@@ -182,8 +181,8 @@ class VolumeMenu(Menu):
         :param game: объект основного класса Game
         """
         Menu.__init__(self, game)
-        self.volume_state = 0
-        self.barx, self.bary = self.mid_w, self.mid_h + 20
+        self.volume_state = 0.5
+        self.barx, self.bary = self.mid_w - 100, self.mid_h + 20
         # self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
 
     def display_menu(self):
@@ -193,7 +192,9 @@ class VolumeMenu(Menu):
             self.check_input()
             self.game.display.fill((0, 0, 0))
             self.game.draw_text("Volume", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 30)
-            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 50, 50))
+            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 200, 50), 3)
+            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, self.volume_state * 200, 50))
+            pygame.mixer.music.set_volume(self.volume_state)
             self.draw_cursor()
             self.blit_screen()
 
