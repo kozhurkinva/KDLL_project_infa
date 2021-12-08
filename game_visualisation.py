@@ -240,8 +240,7 @@ class Level:
         self.player_health = 20
         self.player_money = 70
         self.opponents = []
-        self.towers_prep = []
-        self.towers_active = []
+        self.towers = []
         self.allys = [Blue(200, 200)]
 
         self.level = (level.lower()).replace(' ', '')[-1]
@@ -263,8 +262,7 @@ class Level:
         }
         self.is_choose = False
         self.choose_menu_state = False
-        # self.was_clicked = False
-        self.tmp = None
+        self.pressed_index = None
 
         # FIXME в будущем спавн будет работать по другому
         if self.level == '1':
@@ -278,7 +276,7 @@ class Level:
             design = level_design.read().split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-                self.towers_prep += [TowerSpot(x, y, self.opponents)]
+                self.towers += [TowerSpot(x, y, self.opponents)]
 
     def draw(self):
         """
@@ -286,91 +284,91 @@ class Level:
         """
         self.screen.blit(self.background_img, (0, 0))
 
-        for i in range(len(self.towers_prep)):
-            if self.towers_prep[i].is_activate:
-                self.towers_prep[i].check_cause()
+        for i in range(len(self.towers)):
+            if self.towers[i].is_activate:
+                self.towers[i].check_cause()
 
-            self.towers_prep[i].pressing()
+            self.towers[i].pressing()
 
-            if self.towers_prep[i].is_pressed:
-                self.tmp = i
+            if self.towers[i].is_pressed:
+                self.pressed_index = i
 
-            if self.towers_prep[i].is_pressed or self.choose_menu_state:
+            if self.towers[i].is_pressed or self.choose_menu_state:
 
-                if self.towers_prep[self.tmp].is_activate and not self.choose_menu_state:
-                    if not self.towers_prep[self.tmp].sprite == "TowerSpot":
-                        if self.player_money >= self.towers_prep[self.tmp].upgrade_cost:
-                            self.player_money -= self.towers_prep[self.tmp].upgrade_cost
-                            self.towers_prep[self.tmp].upgrade()
+                if self.towers[self.pressed_index].is_activate and not self.choose_menu_state:
+                    if not self.towers[self.pressed_index].sprite == "TowerSpot":
+                        if self.player_money >= self.towers[self.pressed_index].upgrade_cost:
+                            self.player_money -= self.towers[self.pressed_index].upgrade_cost
+                            self.towers[self.pressed_index].upgrade()
                             print(self.player_money)
                         else:
                             print("You haven't got a money")
-                    elif self.towers_prep[self.tmp].sprite == "TowerSpot":
-                        self.towers_prep[self.tmp].is_activate = False
+                    elif self.towers[self.pressed_index].sprite == "TowerSpot":
+                        self.towers[self.pressed_index].is_activate = False
 
-                elif not self.towers_prep[self.tmp].is_activate:
+                elif not self.towers[self.pressed_index].is_activate:
                     self.choose_menu_state = True
                     if self.choosing_buttons["Arrow"].is_pressed():
-                        self.towers_prep[self.tmp] = ArrowTower(self.towers_prep[self.tmp].x,
-                                                                self.towers_prep[self.tmp].y,
-                                                                self.towers_prep[self.tmp].enemy_list)
-                        if self.player_money >= self.towers_prep[self.tmp].cost:
-                            self.player_money -= self.towers_prep[self.tmp].cost
-                            self.towers_prep[self.tmp].is_activate = True
+                        self.towers[self.pressed_index] = ArrowTower(self.towers[self.pressed_index].x,
+                                                                     self.towers[self.pressed_index].y,
+                                                                     self.towers[self.pressed_index].enemy_list)
+                        if self.player_money >= self.towers[self.pressed_index].cost:
+                            self.player_money -= self.towers[self.pressed_index].cost
+                            self.towers[self.pressed_index].is_activate = True
                             self.choose_menu_state = False
-                            self.tmp = None
+                            self.pressed_index = None
                             print(self.player_money)
                         else:
-                            self.towers_prep[self.tmp] = TowerSpot(self.towers_prep[self.tmp].x,
-                                                                   self.towers_prep[self.tmp].y,
-                                                                   self.towers_prep[self.tmp].enemy_list)
-                            self.towers_prep[self.tmp].is_activate = True
+                            self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
+                                                                        self.towers[self.pressed_index].y,
+                                                                        self.towers[self.pressed_index].enemy_list)
+                            self.towers[self.pressed_index].is_activate = True
                             self.choose_menu_state = False
-                            self.tmp = None
+                            self.pressed_index = None
                             print("No money")
 
                     elif self.choosing_buttons["Bomb"].is_pressed():
-                        self.towers_prep[self.tmp] = BombTower(self.towers_prep[self.tmp].x,
-                                                               self.towers_prep[self.tmp].y,
-                                                               self.towers_prep[self.tmp].enemy_list)
-                        if self.player_money >= self.towers_prep[self.tmp].cost:
-                            self.player_money -= self.towers_prep[self.tmp].cost
-                            self.towers_prep[self.tmp].is_activate = True
+                        self.towers[self.pressed_index] = BombTower(self.towers[self.pressed_index].x,
+                                                                    self.towers[self.pressed_index].y,
+                                                                    self.towers[self.pressed_index].enemy_list)
+                        if self.player_money >= self.towers[self.pressed_index].cost:
+                            self.player_money -= self.towers[self.pressed_index].cost
+                            self.towers[self.pressed_index].is_activate = True
                             self.choose_menu_state = False
-                            self.tmp = None
+                            self.pressed_index = None
                             print(self.player_money)
                         else:
-                            self.towers_prep[self.tmp] = TowerSpot(self.towers_prep[self.tmp].x,
-                                                                   self.towers_prep[self.tmp].y,
-                                                                   self.towers_prep[self.tmp].enemy_list)
-                            self.towers_prep[self.tmp].is_activate = True
+                            self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
+                                                                        self.towers[self.pressed_index].y,
+                                                                        self.towers[self.pressed_index].enemy_list)
+                            self.towers[self.pressed_index].is_activate = True
                             self.choose_menu_state = False
-                            self.tmp = None
+                            self.pressed_index = None
                             print("No money")
 
                     elif self.choosing_buttons["Glow"].is_pressed():
-                        self.towers_prep[self.tmp] = GlowTower(self.towers_prep[self.tmp].x,
-                                                               self.towers_prep[self.tmp].y,
-                                                               self.towers_prep[self.tmp].enemy_list)
-                        if self.player_money >= self.towers_prep[self.tmp].cost:
-                            self.player_money -= self.towers_prep[self.tmp].cost
-                            self.towers_prep[self.tmp].is_activate = True
+                        self.towers[self.pressed_index] = GlowTower(self.towers[self.pressed_index].x,
+                                                                    self.towers[self.pressed_index].y,
+                                                                    self.towers[self.pressed_index].enemy_list)
+                        if self.player_money >= self.towers[self.pressed_index].cost:
+                            self.player_money -= self.towers[self.pressed_index].cost
+                            self.towers[self.pressed_index].is_activate = True
                             self.choose_menu_state = False
-                            self.tmp = None
+                            self.pressed_index = None
                             print(self.player_money)
                         else:
-                            self.towers_prep[self.tmp] = TowerSpot(self.towers_prep[self.tmp].x,
-                                                                   self.towers_prep[self.tmp].y,
-                                                                   self.towers_prep[self.tmp].enemy_list)
-                            self.towers_prep[self.tmp].is_activate = True
+                            self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
+                                                                        self.towers[self.pressed_index].y,
+                                                                        self.towers[self.pressed_index].enemy_list)
+                            self.towers[self.pressed_index].is_activate = True
                             self.choose_menu_state = False
-                            self.tmp = None
+                            self.pressed_index = None
                             print("No money")
                     self.choosing_buttons["Arrow"].draw(self.screen)
                     self.choosing_buttons["Bomb"].draw(self.screen)
                     self.choosing_buttons["Glow"].draw(self.screen)
 
-            self.towers_prep[i].draw(self.screen)
+            self.towers[i].draw(self.screen)
 
             # if self.towers_prep[i].is_pressed or self.choose_menu_state:
             #     if self.towers_prep[i].is_activate and not self.choose_menu_state:
