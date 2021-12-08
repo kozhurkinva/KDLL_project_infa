@@ -89,7 +89,6 @@ class MainMenu(Menu):
     def check_input(self):
         """
         Обрабатывает собыия нажатия на соответствующие аттрибуты меню и осущетсвляет взаимодействия пользователя с меню
-        :return:
         """
         self.move_cursor()
         if self.game.START_KEY:
@@ -127,6 +126,9 @@ class LevelsMenu(Menu):
         self.cursor_rect.midtop = (self.lvl1_x + self.offset, self.lvl1_y)
 
     def display_menu(self):
+        """
+        Отображает меню на экране
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()
@@ -140,6 +142,9 @@ class LevelsMenu(Menu):
             self.blit_screen()
 
     def check_input(self):
+        """
+        Обрабатывает собыия нажатия на соответствующие аттрибуты меню и осущетсвляет взаимодействия пользователя с меню
+        """
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
@@ -181,9 +186,11 @@ class VolumeMenu(Menu):
         Menu.__init__(self, game)
         self.volume_state = 0.5
         self.barx, self.bary = self.mid_w - 200, self.mid_h + 20
-        # self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
 
     def display_menu(self):
+        """
+        Отображает меню на экране
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()
@@ -197,6 +204,9 @@ class VolumeMenu(Menu):
             self.blit_screen()
 
     def check_input(self):
+        """
+        Обрабатывает собыия нажатия на соответствующие аттрибуты меню и осущетсвляет взаимодействия пользователя с меню
+        """
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
@@ -223,6 +233,9 @@ class CreditsMenu(Menu):
         Menu.__init__(self, game)
 
     def display_menu(self):
+        """
+        Отображает меню на экране
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()

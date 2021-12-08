@@ -15,7 +15,7 @@ class Game:
         Здесь происзодит инициалиция размеров окна, настройка соответствущих флагов,
         поверхностей отрисовки, шрифта текста, а также инициализация меню и переменных логики игры
         """
-        # General
+        # Общее
         pygame.init()
         self.WIDTH, self.HEIGHT = 800, 600
         self.mid_h, self.mid_w = self.HEIGHT / 2, self.WIDTH / 2
@@ -28,29 +28,28 @@ class Game:
         self.font_name = pygame.font.get_default_font()
         self.clock = pygame.time.Clock()
 
-        # Sounds
+        # Звук
         self.main_theme = pygame.mixer.music.load("angrybirds.mp3")
         self.shoottSound = pygame.mixer.Sound("shoot1.wav")
         self.takedamage = pygame.mixer.Sound("takedam1.wav")
 
         # Game variables and counters
-        self.level_name = 0
-        self.tower_types = [0] * 999
-        self.towers = []
-        # self.opponents = []
-        self.bullets = []
-        self.press_count = 0
-        self.is_paused = False
+        # self.level_name = 0
+        # self.tower_types = [0] * 999
+        # self.towers = []
+        # self.bullets = []
 
-        # Level object
+        # Объект уровня
         self.level = None
 
-        # Menus
+        # Меню и пауза
         self.main_menu = MainMenu(self)
         self.volume_set = VolumeMenu(self)
         self.credits = CreditsMenu(self)
         self.levels = LevelsMenu(self)
         self.curr_menu = self.main_menu
+        self.press_count = 0
+        self.is_paused = False
 
     def main_loop(self):
         """

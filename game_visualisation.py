@@ -11,33 +11,40 @@ class Level:
         :param level: название текущего уровнея в формате "Level #", где # - номер уровня.
         :param screen: поверхность для отрисовки
         """
+        # Для игры
         self.player_health = 20
         self.player_money = 70
         self.opponents = []
         self.towers = []
         self.allys = [Blue(200, 200)]
 
+        # Для настройки уровня
         self.level = (level.lower()).replace(' ', '')[-1]
-
         self.level_name = (level.lower()).replace(' ', '')
 
+        # Поверхность отрисовки
         self.screen = screen
 
+        # Изображения
         self.background_img = pygame.image.load(
             "levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
-
         self.arrow_button_img = pygame.image.load("Textures/RArrowTower1.png")
         self.bomb_button_img = pygame.image.load("Textures/RBombTower1.png")
         self.glow_button_img = pygame.image.load("Textures/1GlowTower1.png")
 
-        x0, y0 = self.screen.get_rect().midtop
-
+        # Координаты и параметры для отрисовки изображений
+        self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
+        self.x_player_money, self.y_player_money = self.screen.get_rect().topright
+        self.x_player_money -= 60
+        self.y_player_money += 20
         self.choosing_buttons_poss = {
-            "AT_pos": (x0 - self.bomb_button_img.get_rect().size[0], y0),
-            "BT_pos": (x0, y0),
-            "GT_pos": (x0 + self.bomb_button_img.get_rect().size[0], y0)
+            "AT_pos": (self.x_buttons - self.bomb_button_img.get_rect().size[0], self.y_buttons),
+            "BT_pos": (self.x_buttons, self.y_buttons),
+            "GT_pos": (self.x_buttons + self.bomb_button_img.get_rect().size[0], self.y_buttons)
         }
+        self.text_color = (0, 0, 0)
 
+        # Кнопки
         self.choosing_buttons = {
             "Arrow": Button(self.choosing_buttons_poss["AT_pos"][0], self.choosing_buttons_poss["AT_pos"][1],
                             self.arrow_button_img, 0.8),
@@ -46,11 +53,12 @@ class Level:
             "Glow": Button(self.choosing_buttons_poss["GT_pos"][0], self.choosing_buttons_poss["GT_pos"][1],
                            self.glow_button_img, 0.8)
         }
+        self.cancel_button = Button(0, 0, self.screen, 1.0)
+
+        # Флажки
         self.is_choose = False
         self.choose_menu_state = False
         self.pressed_index = None
-
-        self.text_color = (0, 0, 0)
 
         # список противников в волнах
         self.wave_timer = 0
@@ -64,102 +72,116 @@ class Level:
                     self.spawn_list[wave_number][opp_number][0] = int(self.spawn_list[wave_number][opp_number][0])
                     self.spawn_list[wave_number][opp_number][3] = int(self.spawn_list[wave_number][opp_number][3])
 
+        # конфигурация уровня
         with open("levels/level" + str(self.level) + "/design.txt", "r") as level_design:
             design = level_design.read().split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
                 self.towers += [TowerSpot(x, y, self.opponents)]
 
+    def choosing_buttons_draw(self):
+        """
+        Отрисовка кнопок выбора башни для постройки
+        """
+        self.choosing_buttons["Arrow"].draw(self.screen)
+        self.choosing_buttons["Bomb"].draw(self.screen)
+        self.choosing_buttons["Glow"].draw(self.screen)
+
+    def check_upgrade(self, tower_obj):
+        """
+        Обработчик улучшения башни
+        :param tower_obj: объект башни
+        """
+        if not tower_obj.sprite == "TowerSpot":
+            if self.player_money >= tower_obj.upgrade_cost:
+                self.player_money -= tower_obj.upgrade_cost
+                tower_obj.upgrade()
+                print(self.player_money)
+            else:
+                self.text_color = (255, 0, 0)
+                print("You haven't got a money")
+        elif tower_obj.sprite == "TowerSpot":
+            tower_obj.is_activate = False
+
+    def check_money(self, tower_obj):
+        """
+        Проверка наличия соотвтетствующего количества валюты у игрока
+        :param tower_obj: объект башни
+        :return: строка-маркер отсутствия валюты
+        """
+        if self.player_money >= tower_obj.cost:
+            self.player_money -= tower_obj.cost
+            tower_obj.is_activate = True
+            self.choose_menu_state = False
+            self.pressed_index = None
+            print(self.player_money)
+        else:
+            tower_obj.is_activate = True
+            self.choose_menu_state = False
+            self.text_color = (255, 0, 0)
+            print("No money")
+            return "No money"
+
     def draw(self):
         """
-        Отрисовка башен и обработка нажатия на них пользователя.
+        Основная отрисовка уровня
         """
         self.screen.blit(self.background_img, (0, 0))
 
-        self.draw_text("Player's money: " + str(self.player_money), self.text_color, 40, 400, 500)
+        self.draw_text("Money: " + str(self.player_money), self.text_color, 20, self.x_player_money,
+                       self.y_player_money)
         self.text_color = (0, 0, 0)
 
         for i in range(len(self.towers)):
             if self.towers[i].is_activate:
                 self.towers[i].check_cause()
             self.towers[i].pressing()
+
             if self.towers[i].is_pressed:
                 self.pressed_index = i
+
             if self.towers[i].is_pressed or self.choose_menu_state:
                 if self.towers[self.pressed_index].is_activate and not self.choose_menu_state:
-                    if not self.towers[self.pressed_index].sprite == "TowerSpot":
-                        if self.player_money >= self.towers[self.pressed_index].upgrade_cost:
-                            self.player_money -= self.towers[self.pressed_index].upgrade_cost
-                            self.towers[self.pressed_index].upgrade()
-                            print(self.player_money)
-                        else:
-                            self.text_color = (255, 0, 0)
-                            print("You haven't got a money")
-                    elif self.towers[self.pressed_index].sprite == "TowerSpot":
-                        self.towers[self.pressed_index].is_activate = False
+                    self.check_upgrade(self.towers[self.pressed_index])
+
                 elif not self.towers[self.pressed_index].is_activate:
                     self.choose_menu_state = True
                     if self.choosing_buttons["Arrow"].is_pressed():
                         self.towers[self.pressed_index] = ArrowTower(self.towers[self.pressed_index].x,
                                                                      self.towers[self.pressed_index].y,
                                                                      self.towers[self.pressed_index].enemy_list)
-                        if self.player_money >= self.towers[self.pressed_index].cost:
-                            self.player_money -= self.towers[self.pressed_index].cost
-                            self.towers[self.pressed_index].is_activate = True
-                            self.choose_menu_state = False
-                            self.pressed_index = None
-                            print(self.player_money)
-                        else:
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
                             self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
                                                                         self.towers[self.pressed_index].y,
                                                                         self.towers[self.pressed_index].enemy_list)
-                            self.towers[self.pressed_index].is_activate = True
-                            self.choose_menu_state = False
                             self.pressed_index = None
-                            self.text_color = (255, 0, 0)
-                            print("No money")
+
                     elif self.choosing_buttons["Bomb"].is_pressed():
                         self.towers[self.pressed_index] = BombTower(self.towers[self.pressed_index].x,
                                                                     self.towers[self.pressed_index].y,
                                                                     self.towers[self.pressed_index].enemy_list)
-                        if self.player_money >= self.towers[self.pressed_index].cost:
-                            self.player_money -= self.towers[self.pressed_index].cost
-                            self.towers[self.pressed_index].is_activate = True
-                            self.choose_menu_state = False
-                            self.pressed_index = None
-                            print(self.player_money)
-                        else:
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
                             self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
                                                                         self.towers[self.pressed_index].y,
                                                                         self.towers[self.pressed_index].enemy_list)
-                            self.towers[self.pressed_index].is_activate = True
-                            self.choose_menu_state = False
                             self.pressed_index = None
-                            self.text_color = (255, 0, 0)
-                            print("No money")
+
                     elif self.choosing_buttons["Glow"].is_pressed():
                         self.towers[self.pressed_index] = GlowTower(self.towers[self.pressed_index].x,
                                                                     self.towers[self.pressed_index].y,
                                                                     self.towers[self.pressed_index].enemy_list)
-                        if self.player_money >= self.towers[self.pressed_index].cost:
-                            self.player_money -= self.towers[self.pressed_index].cost
-                            self.towers[self.pressed_index].is_activate = True
-                            self.choose_menu_state = False
-                            self.pressed_index = None
-                            print(self.player_money)
-                        else:
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
                             self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
                                                                         self.towers[self.pressed_index].y,
                                                                         self.towers[self.pressed_index].enemy_list)
-                            self.towers[self.pressed_index].is_activate = True
-                            self.choose_menu_state = False
                             self.pressed_index = None
-                            self.text_color = (255, 0, 0)
-                            print("No money")
-                    self.choosing_buttons["Arrow"].draw(self.screen)
-                    self.choosing_buttons["Bomb"].draw(self.screen)
-                    self.choosing_buttons["Glow"].draw(self.screen)
+
+                    self.choosing_buttons_draw()
+
             self.towers[i].draw(self.screen)
+
+            if self.cancel_button.is_pressed():
+                self.choose_menu_state = False
 
         self.spawn_opp()
 
@@ -219,7 +241,7 @@ class Level:
                 self.wave_timer = 0
 
 
-class Button:  # FIXME: возможно вообще уберем этот класс
+class Button:
     def __init__(self, x, y, image, scale):
         """
         Класс кнопки.
@@ -239,7 +261,6 @@ class Button:  # FIXME: возможно вообще уберем этот кл
     def is_pressed(self):
         """
         Обработчик нажатия на кнопку, а также отрисовщик кнопки.
-        :param surface: поверхность отрисовки
         :return: состояние кнопки (нажата или нет)
         """
         action = False
@@ -256,4 +277,8 @@ class Button:  # FIXME: возможно вообще уберем этот кл
         return action
 
     def draw(self, surface):
+        """
+        Отрисовка кнопки
+        :param surface: поверхность отрисовки
+        """
         surface.blit(self.image, (self.rect.x, self.rect.y))
