@@ -31,6 +31,8 @@ class Creature:
         """
         Функция получения существом урона в количестве dmg. В случае нехватки очков жизни вызывает смерть существа.
         """
+        pygame.mixer.Sound("takedam1.wav").play()
+        pygame.mixer.Sound("takedam1.wav").stop()
         self.hp -= dmg
         if self.hp <= 0:
             self.die()

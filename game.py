@@ -28,7 +28,9 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Sounds
-        self.background_sound = pygame.mixer.Sound("background.wav")
+        self.main_theme = pygame.mixer.music.load("angrybirds.mp3")
+        self.shoottSound = pygame.mixer.Sound("shoot1.wav")
+        self.takedamage = pygame.mixer.Sound("takedam1.wav")
 
         # Game variables and counters
         self.level_name = 0
@@ -48,6 +50,8 @@ class Game:
         self.credits = CreditsMenu(self)
         self.levels = LevelsMenu(self)
         self.curr_menu = self.main_menu
+
+
 
     def main_loop(self):
         """

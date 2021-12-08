@@ -38,16 +38,20 @@ class MainMenu(Menu):
         self.exitx, self.exity = self.mid_w, self.mid_h + 110
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
 
+
+
     def display_menu(self):
         """
         Отображает меню на экране
         """
         self.run_display = True
+        #self.play_main_theme()
         while self.run_display:
+            self.play_main_theme()
             self.game.check_events()
             self.check_input()
             self.game.display.fill(self.game.BLACK)
-            self.game.draw_text("Main Menu", 50, self.mid_w, self.mid_h - 50)
+            self.game.draw_text("Maaaain Menu", 50, self.mid_w, self.mid_h - 50)
             self.game.draw_text("Start Game", 20, self.startx, self.starty)
             self.game.draw_text("Options", 20, self.optionsx, self.optionsy)
             self.game.draw_text("Credits", 20, self.creditsx, self.creditsy)
@@ -88,7 +92,7 @@ class MainMenu(Menu):
 
     def check_input(self):
         """
-        Обрабатывает собылия нажатия на соответствующие аттрибуты меню и осущетсвляет взаимодействия пользователя с меню
+        Обрабатывает собыия нажатия на соответствующие аттрибуты меню и осущетсвляет взаимодействия пользователя с меню
         :return:
         """
         self.move_cursor()
@@ -102,6 +106,15 @@ class MainMenu(Menu):
             elif self.state == "Exit":
                 self.game.running, self.game.playing = False, False
             self.run_display = False
+
+
+    def play_main_theme(self):
+        """
+        Воспроизведение музыки в игре
+        """
+        pygame.mixer.music.load("angrybirds.mp3")
+        pygame.mixer.music.play(-1)
+
 
 
 class LevelsMenu(Menu):
