@@ -18,8 +18,8 @@ file_name += input("группа: ") + "_move_map.txt"
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 rect_size = [WIDTH / size[0], HEIGHT / size[1]]
 map_info = []
-for i in range(size[1]):
-    map_info += [["-"] * size[0]]
+for i in range(size[0]):
+    map_info += [["-"] * size[1]]
 finished = False
 move_trajectory = []
 trajectory_length = 0
@@ -77,6 +77,7 @@ if len(move_trajectory) >= 2:
         map_info[x][y] = str((nx + 0.5) * rect_size[0]) + ";" + str((ny + 0.5) * rect_size[1])
 map_info[move_trajectory[-1][0]][move_trajectory[-1][1]] = "stop"
 map_info += [[(move_trajectory[0][0] + 0.5) * rect_size[0], (move_trajectory[0][1] + 0.5) * rect_size[1]]]
+
 # сохранение данных
 with open("new/" + file_name, "w") as file:
     file.write(str(trajectory_length) + " ")
