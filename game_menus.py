@@ -1,15 +1,13 @@
 import pygame
 
-import game
-
 
 class Menu:
-    def __init__(self, our_game):
+    def __init__(self, game):
         """
         Базовый класс меню, от него наследуются остальные: главное меню, меню выбора урвней и т.д.
-        :param our_game: игра как объект освного класса Game
+        :param game: игра как объект освного класса Game
         """
-        self.game = our_game
+        self.game = game
         self.mid_h, self.mid_w = self.game.HEIGHT / 2, self.game.WIDTH / 2
         self.run_display = True
         self.cursor_rect = pygame.Rect(0, 0, 20, 20)
@@ -25,12 +23,12 @@ class Menu:
 
 
 class MainMenu(Menu):
-    def __init__(self, our_game):
+    def __init__(self, game):
         """
         Основное меню. В нем осуществляется навигация по настройкам игры, а также выход из игры.
-        :param our_game: игра как объект освного класса Game
+        :param game: игра как объект освного класса Game
         """
-        Menu.__init__(self, our_game)
+        Menu.__init__(self, game)
         self.state = "Start Game"
         self.startx, self.starty = self.mid_w, self.mid_h + 20
         self.optionsx, self.optionsy = self.mid_w, self.mid_h + 50
@@ -112,14 +110,14 @@ class MainMenu(Menu):
 
 
 class LevelsMenu(Menu):
-    def __init__(self, our_game):
+    def __init__(self, game):
         """
         Меню выбора уровней.
         Методы аналогичны методам MainMenu.
         При нажатии на соответствующий уровень запускает игровой процесс этого уровня
-        :param our_game: объект основного класса Game
+        :param game: объект основного класса Game
         """
-        Menu.__init__(self, our_game)
+        Menu.__init__(self, game)
         self.state = "Level 1"
         self.lvl1_x, self.lvl1_y = self.mid_w, self.mid_h + 20
         self.lvl2_x, self.lvl2_y = self.mid_w, self.mid_h + 40
@@ -171,20 +169,19 @@ class LevelsMenu(Menu):
                 self.state = "Level 1"
         elif self.game.START_KEY:
             self.game.level_name = self.state
-            self.game.level = game.Level(self.game.level_name, self.game.display)
+            self.game.set_level()
             self.run_display = False
-            self.game.playing = True
 
 
 class VolumeMenu(Menu):
-    def __init__(self, our_game):
+    def __init__(self, game):
         """
         Меню настроек.
         Методы аналогичны методам MainMenu.
         Будет реализована настройка звука и некоторые другие
-        :param our_game: объект основного класса Game
+        :param game: объект основного класса Game
         """
-        Menu.__init__(self, our_game)
+        Menu.__init__(self, game)
         self.volume_state = 0.5
         self.barx, self.bary = self.mid_w - 200, self.mid_h + 20
 
@@ -224,14 +221,14 @@ class VolumeMenu(Menu):
 
 
 class CreditsMenu(Menu):
-    def __init__(self, our_game):
+    def __init__(self, game):
         """
         Меню валюты или очков.
         Методы аналогичны методам MainMenu.
         Позже будет встроено в логику работы программы
-        :param our_game: объект основного класса Game
+        :param game: объект основного класса Game
         """
-        Menu.__init__(self, our_game)
+        Menu.__init__(self, game)
 
     def display_menu(self):
         """
