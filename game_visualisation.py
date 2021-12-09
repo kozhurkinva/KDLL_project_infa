@@ -48,6 +48,7 @@ class Level:
         self.passive_glow_button_img = pygame.transform.scale(self.passive_glow_button_img, (
             self.passive_glow_button_img.get_size()[0] * 0.8, self.passive_glow_button_img.get_size()[1] * 0.8))
 
+
         # Координаты и параметры для отрисовки изображений
         self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
         self.x_player_money, self.y_player_money = self.screen.get_rect().topright
