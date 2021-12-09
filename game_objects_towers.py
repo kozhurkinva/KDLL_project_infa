@@ -138,11 +138,13 @@ class TowerSpot(Tower):
 
 
 class ArrowTower(Tower):
+    cost = 10
+
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - ArrowTower. Башня лучников выпускает стрелы """
         super().__init__(x, y, "enemy_in_range", enemy_list, "LArrowTower1")
         self.level = 1
-        self.cost = 10
+        self.cost = ArrowTower.cost
         self.upgrade_cost = 20
         self.range = 100
         self.reload_time = 40
@@ -181,10 +183,12 @@ class ArrowTower(Tower):
 
 
 class GunTower(Tower):
+    cost = 15
+
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
         super().__init__(x, y, "enemy_in_range", enemy_list, "LGunTower1")
-        self.cost = 15
+        self.cost = GunTower.cost
         self.range = 75
         self.reload_time = 10
         self.dmg = 1
@@ -201,10 +205,12 @@ class GunTower(Tower):
 
 
 class BombTower(Tower):
+    cost = 25
+
     def __init__(self, x, y, enemy_list):
         """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
         super().__init__(x, y, "ground_enemy_in_range", enemy_list, "LBombTower1")
-        self.cost = 25
+        self.cost = BombTower.cost
         self.upgrade_cost = 30
         self.range = 60
         self.reload_time = 150
@@ -242,10 +248,11 @@ class BombTower(Tower):
 
 class GlowTower(Tower):
     """ Инициализация подкласса Tower - GlowTower. Светящаяся башня выпускает усиленные временем снаряды """
+    cost = 25
 
     def __init__(self, x, y, enemy_list):
         super().__init__(x, y, "enemy_in_range", enemy_list, "1GlowTower1")
-        self.cost = 25
+        self.cost = GlowTower.cost
         self.upgrade_cost = 30
         self.range = 100
         self.reload_time = 100

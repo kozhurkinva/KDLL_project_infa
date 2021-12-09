@@ -28,9 +28,12 @@ class Level:
         # Изображения
         self.background_img = pygame.image.load(
             "levels/level" + str(self.level) + "/Background" + ".png").convert_alpha()
-        self.arrow_button_img = pygame.image.load("Textures/RArrowTower1.png")
-        self.bomb_button_img = pygame.image.load("Textures/RBombTower1.png")
-        self.glow_button_img = pygame.image.load("Textures/1GlowTower1.png")
+        self.active_arrow_button_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
+        self.active_bomb_button_img = pygame.image.load("Textures/RBombTower1.png").convert_alpha()
+        self.active_glow_button_img = pygame.image.load("Textures/1GlowTower1.png").convert_alpha()
+        self.passive_arrow_button_img = pygame.image.load("Textures/LockedArrowTower.png").convert_alpha()
+        self.passive_bomb_button_img = pygame.image.load("Textures/LockedBombTower.png").convert_alpha()
+        self.passive_glow_button_img = pygame.image.load("Textures/LockedGlowTower.png").convert_alpha()
 
         # Координаты и параметры для отрисовки изображений
         self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
@@ -38,22 +41,22 @@ class Level:
         self.x_player_money -= 60
         self.y_player_money += 20
         self.choosing_buttons_poss = {
-            "AT_pos": (self.x_buttons - self.bomb_button_img.get_rect().size[0], self.y_buttons),
+            "AT_pos": (self.x_buttons - self.active_bomb_button_img.get_rect().size[0], self.y_buttons),
             "BT_pos": (self.x_buttons, self.y_buttons),
-            "GT_pos": (self.x_buttons + self.bomb_button_img.get_rect().size[0], self.y_buttons)
+            "GT_pos": (self.x_buttons + self.active_bomb_button_img.get_rect().size[0], self.y_buttons)
         }
         self.text_color = (0, 0, 0)
 
         # Кнопки
         self.choosing_buttons = {
             "Arrow": Button(self.choosing_buttons_poss["AT_pos"][0], self.choosing_buttons_poss["AT_pos"][1],
-                            self.arrow_button_img, 0.8),
+                            self.active_arrow_button_img, 1),
             "Bomb": Button(self.choosing_buttons_poss["BT_pos"][0], self.choosing_buttons_poss["BT_pos"][1],
-                           self.bomb_button_img, 0.8),
+                           self.active_bomb_button_img, 1),
             "Glow": Button(self.choosing_buttons_poss["GT_pos"][0], self.choosing_buttons_poss["GT_pos"][1],
-                           self.glow_button_img, 0.8)
+                           self.active_glow_button_img, 1)
         }
-        self.cancel_button = Button(0, 0, self.screen, 1.0)
+        self.cancel_button = Button(0, 0, self.screen, 1, mouse_type=2)
 
         # Флажки
         self.is_choose = False
@@ -122,13 +125,29 @@ class Level:
             print("No money")
             return "No money"
 
+    def change_buttons_img(self):
+        if self.player_money < ArrowTower.cost:
+            self.choosing_buttons["Arrow"].image = self.passive_arrow_button_img
+        else:
+            self.choosing_buttons["Arrow"].image = self.active_arrow_button_img
+
+        if self.player_money < BombTower.cost:
+            self.choosing_buttons["Bomb"].image = self.passive_bomb_button_img
+        else:
+            self.choosing_buttons["Bomb"].image = self.active_bomb_button_img
+
+        if self.player_money < GlowTower.cost:
+            self.choosing_buttons["Glow"].image = self.passive_glow_button_img
+        else:
+            self.choosing_buttons["Glow"].image = self.active_glow_button_img
+
     def draw(self):
         """
         Основная отрисовка уровня
         """
         self.screen.blit(self.background_img, (0, 0))
         """Отрисовка шкалы здоровья игрока"""
-        pygame.draw.rect(self.screen, (255, 0, 0), (250, 8, self.player_health * 20 , 20))
+        pygame.draw.rect(self.screen, (255, 0, 0), (250, 8, self.player_health * 20, 20))
         pygame.draw.rect(self.screen, (255, 255, 255), (250, 8, 400, 20), 3)
 
         self.draw_text("HP: " + str(self.player_health), self.text_color, 20, 200,
@@ -140,7 +159,10 @@ class Level:
         for i in range(len(self.towers)):
             if self.towers[i].is_activate:
                 self.towers[i].check_cause()
+
             self.towers[i].pressing()
+
+            self.change_buttons_img()
 
             if self.towers[i].is_pressed:
                 self.pressed_index = i
@@ -148,6 +170,9 @@ class Level:
             if self.towers[i].is_pressed or self.choose_menu_state:
                 if self.towers[self.pressed_index].is_activate and not self.choose_menu_state:
                     self.check_upgrade(self.towers[self.pressed_index])
+
+                elif self.towers[self.pressed_index].is_activate and self.choose_menu_state:
+                    self.choose_menu_state = False
 
                 elif not self.towers[self.pressed_index].is_activate:
                     self.choose_menu_state = True
@@ -183,10 +208,10 @@ class Level:
 
                     self.choosing_buttons_draw()
 
-            self.towers[i].draw(self.screen)
+                    if self.cancel_button.is_pressed():
+                        self.choose_menu_state = False
 
-            if self.cancel_button.is_pressed():
-                self.choose_menu_state = False
+            self.towers[i].draw(self.screen)
 
         self.spawn_opp()
 
@@ -247,7 +272,7 @@ class Level:
 
 
 class Button:
-    def __init__(self, x, y, image, scale):
+    def __init__(self, x, y, image, scale, mouse_type=0):
         """
         Класс кнопки.
         Может сделать какой-то спрайт или область экрана кликабельными.
@@ -258,6 +283,7 @@ class Button:
         """
         width = image.get_width()
         height = image.get_height()
+        self.mouse_type = mouse_type
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
@@ -272,11 +298,11 @@ class Button:
         pos = pygame.mouse.get_pos()
 
         if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] and not self.clicked:
+            if pygame.mouse.get_pressed()[self.mouse_type] and not self.clicked:
                 self.clicked = True
                 action = True
 
-        if not pygame.mouse.get_pressed()[0]:
+        if not pygame.mouse.get_pressed()[self.mouse_type]:
             self.clicked = False
 
         return action
