@@ -3,8 +3,6 @@ import os.path as path
 
 import pygame.draw  # FIXME пока не доделан vis + мб не всё нужно импортить
 
-import game_constants as g_c
-
 
 class Projectile:
     def __init__(self, sprite, dmg, x, y, shot_creature):

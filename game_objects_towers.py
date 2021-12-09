@@ -3,7 +3,6 @@ import os.path as path
 
 import pygame.draw  # FIXME пока не доделан vis + мб не всё нужно импортить
 
-import game_constants as g_c
 from game_objects_projectiles import *
 
 

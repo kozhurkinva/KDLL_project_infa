@@ -3,8 +3,6 @@ import os.path as path
 
 import pygame  # FIXME пока не доделан vis + мб не всё нужно импортить
 
-import game_constants as g_c
-
 
 class Creature:
     def __init__(self, x=999999999999999, y=999999999999999):
@@ -13,6 +11,7 @@ class Creature:
         У каждого есть показатели здоровья, урона и скорости, соответствующая им типизация,
         а также прикреплённый к ним список летящих в него в данный момент снарядов, перемещающихся вместе с ними
         """
+        self.WIDTH, self.HEIGHT = 800, 600
         self.hp = 0
         self.dmg = 0
         self.speed = 0
@@ -106,7 +105,7 @@ class Opponent(Creature):
             self.y = float(level_map[-1][1])
             print("I've started", self.x, self.y)
         self.move(
-            level_map[int(self.x / g_c.WIDTH * len(level_map[1]))][int(self.y / g_c.HEIGHT * (len(level_map) - 1))])
+            level_map[int(self.x / self.WIDTH * len(level_map[1]))][int(self.y / self.HEIGHT * (len(level_map) - 1))])
         self.distance -= self.speed
 
     def move(self, an="-"):
