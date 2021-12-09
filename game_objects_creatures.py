@@ -25,6 +25,7 @@ class Creature:
         self.alive = True
         self.alpha = 1
         self.hp_bar_limit = self.hp  # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
+        self.sprite = ""
 
     def take_damage(self, dmg):
         """
@@ -42,10 +43,10 @@ class Creature:
 
     def draw(self, screen):
         """ Рисует живое существо """
-        img = pygame.image.load("Textures/" + str(type(self).__mro__[0].__name__) + ".png").convert_alpha()
+        img = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
         ''' рисует hp bar и его рамку '''
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp/self.alpha * 75, 15))
+        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp / self.alpha * 75, 15))
         pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, 75, 15), 3)
 
     def fight(self, enemy):
@@ -75,6 +76,7 @@ class Blue(Ally):
         self.dmg = 0.1
         self.hp = 100
         self.alpha = 100
+        self.sprite = "Blue"
 
 
 class Opponent(Creature):
@@ -107,6 +109,10 @@ class Opponent(Creature):
         self.move(
             level_map[int(self.x / self.WIDTH * len(level_map[1]))][int(self.y / self.HEIGHT * (len(level_map) - 1))])
         self.distance -= self.speed
+        if self.distance % 40 < 20:
+            self.sprite = self.sprite[:-1] + "1"
+        else:
+            self.sprite = self.sprite[:-1] + "2"
 
     def move(self, an="-"):
         """FIXME
@@ -132,6 +138,10 @@ class Opponent(Creature):
             self.vy = self.speed * math.sin(self.move_an)
             self.x += self.vx
             self.y += self.vy
+            if self.vx >= 0:
+                self.sprite = "R" + self.sprite[1:]
+            else:
+                self.sprite = "L" + self.sprite[1:]
         return 0
 
 
@@ -143,6 +153,7 @@ class Warrior(Opponent):
         self.speed = 1
         self.loot = 5
         self.alpha = 12  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RWarrior1"
 
 
 class Bird(Opponent):
@@ -154,7 +165,63 @@ class Bird(Opponent):
         self.loot = 7
         self.player_damage = 2
         self.alpha = 8  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RBird1"
         self.types += ["flying"]
 
 
-OPPONENT_CLASSES_LIST = (Opponent, Warrior, Bird)
+class HealingMage(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 150
+        self.dmg = 5
+        self.speed = 0.5
+        self.loot = 70
+        self.player_damage = 15
+        self.alpha = 150  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RHealingMage1"
+        self.types += ["healing_aura", "spawns"]
+        self.spawned_creature = "ForestSpirit"
+
+
+class DefenseMage(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 500
+        self.dmg = 7
+        self.speed = 0.5
+        self.loot = 100
+        self.player_damage = 15
+        self.alpha = 500  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RDefenseMage1"
+        self.types += ["protecting_aura", "spawns"]
+        self.spawned_creature = "Golem"
+
+
+class DamageMage(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 450
+        self.dmg = 10
+        self.speed = 0.75
+        self.loot = 130
+        self.player_damage = 15
+        self.alpha = 450  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RDamageMage1"
+        self.types += ["battle_aura", "spawns"]
+        self.spawned_creature = "FireSpirit"
+
+
+class ForestSpirit(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 3
+        self.dmg = 5
+        self.speed = 3
+        self.loot = 2
+        self.player_damage = 2
+        self.alpha = 3  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RForestSpirit1"
+        self.types += ["healing_aura"]
+
+
+OPPONENT_CLASSES_LIST = (Opponent, Warrior, Bird, HealingMage, DefenseMage, DamageMage)
