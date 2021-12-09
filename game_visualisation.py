@@ -194,7 +194,7 @@ class Level:
             if opp.finished:
                 self.player_health -= opp.player_damage
                 self.player_money -= opp.loot  # в случае прохода врага деньги не добавляются
-            opp.move_opponent(self.level_name)
+            self.opponents += opp.move_opponent(self.level_name)
             for projectile in opp.projectiles:
                 projectile.move(self.screen)
             opp.draw(self.screen)  # FIXME временно, для тестов

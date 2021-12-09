@@ -1,1 +1,2 @@
 5 Bird alpha 30
+1 DefenseMage alpha 30

@@ -26,6 +26,9 @@ class Creature:
         self.alpha = 1
         self.hp_bar_limit = self.hp  # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
         self.sprite = ""
+        self.spawned_creature = ["", 0]
+        self.charge = 0
+        self.charge_goal = -1  # Маги заряжаются каждый тик, затем призывают существ
 
     def take_damage(self, dmg):
         """
@@ -46,8 +49,8 @@ class Creature:
         img = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
         ''' рисует hp bar и его рамку '''
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp / self.alpha * img.get_width(), 10))
-        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, img.get_width(), 10), 3)
+        pygame.draw.rect(screen, (255, 0, 0), [self.x, self.y + 50, self.hp / self.alpha * img.get_width(), 10])
+        pygame.draw.rect(screen, (255, 255, 255), [self.x, self.y + 50, img.get_width(), 10], 3)
 
     def fight(self, enemy):
         """
@@ -107,12 +110,18 @@ class Opponent(Creature):
             self.y = float(level_map[-1][1])
             print("I've started", self.x, self.y)
         self.move(
-            level_map[int(self.x / self.WIDTH * len(level_map[1]))][int(self.y / self.HEIGHT * (len(level_map) - 1))])
+            level_map[int(self.x / self.HEIGHT * len(level_map[1]))][int(self.y / self.WIDTH * (len(level_map) - 1))])
         self.distance -= self.speed
         if self.distance % 40 < 20:
             self.sprite = self.sprite[:-1] + "1"
         else:
             self.sprite = self.sprite[:-1] + "2"
+        if self.charge_goal > 0:
+            self.charge += 1
+            if self.charge == self.charge_goal:
+                self.charge = 0
+                return self.summon()
+        return []
 
     def move(self, an="-"):
         """FIXME
@@ -143,6 +152,26 @@ class Opponent(Creature):
             else:
                 self.sprite = "L" + self.sprite[1:]
         return 0
+
+    def summon(self):
+        """
+        В соответствии с параметрами призывающего мага :return: возвращает список новых существ, призванных магом
+        """
+        new_creatures = []
+        for i in range(self.spawned_creature[1]):
+            if self.spawned_creature[0] == "ForestSpirit":
+                new_one = ForestSpirit(self.group)
+            elif self.spawned_creature[0] == "Golem":
+                new_one = Golem(self.group)
+            elif self.spawned_creature[0] == "FireSpirit":
+                new_one = FireSpirit(self.group)
+            new_one.vx = self.vx
+            new_one.vy = self.vy
+            new_one.x = self.x
+            new_one.y = self.y
+            new_one.move_an = self.move_an
+            new_creatures += [new_one]
+        return new_creatures
 
 
 class Warrior(Opponent):
@@ -180,7 +209,9 @@ class HealingMage(Opponent):
         self.alpha = 150  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RHealingMage1"
         self.types += ["healing_aura", "spawns"]
-        self.spawned_creature = "ForestSpirit"
+        self.spawned_creature = ["ForestSpirit", 1]
+        self.charge = 0
+        self.charge_goal = 180
 
 
 class DefenseMage(Opponent):
@@ -194,34 +225,64 @@ class DefenseMage(Opponent):
         self.alpha = 500  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RDefenseMage1"
         self.types += ["protecting_aura", "spawns"]
-        self.spawned_creature = "Golem"
+        self.spawned_creature = ["Golem", 1]
+        self.charge = 0
+        self.charge_goal = 420
 
 
 class DamageMage(Opponent):
     def __init__(self, group):
         super().__init__(group)
-        self.hp = 450
+        self.hp = 350
         self.dmg = 10
         self.speed = 0.75
         self.loot = 130
         self.player_damage = 15
-        self.alpha = 450  # коэфициент для растяжения hp bar по длине изображения
+        self.alpha = 350  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RDamageMage1"
         self.types += ["battle_aura", "spawns"]
-        self.spawned_creature = "FireSpirit"
+        self.spawned_creature = ["FireSpirit", 1]
+        self.charge = 0
+        self.charge_goal = 180
 
 
 class ForestSpirit(Opponent):
     def __init__(self, group):
         super().__init__(group)
         self.hp = 3
-        self.dmg = 5
-        self.speed = 3
+        self.dmg = 3
+        self.speed = 2.5
         self.loot = 2
-        self.player_damage = 2
+        self.player_damage = 3
         self.alpha = 3  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RForestSpirit1"
         self.types += ["healing_aura"]
 
 
-OPPONENT_CLASSES_LIST = (Opponent, Warrior, Bird, HealingMage, DefenseMage, DamageMage)
+class Golem(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 80
+        self.dmg = 5
+        self.speed = 0.8
+        self.loot = 20
+        self.player_damage = 3
+        self.alpha = 80  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RGolem1"
+        self.types += ["damage_absorption"]
+
+
+class FireSpirit(Opponent):
+    def __init__(self, group):
+        super().__init__(group)
+        self.hp = 3
+        self.dmg = 7
+        self.speed = 4
+        self.loot = 3
+        self.player_damage = 3
+        self.alpha = 3  # коэфициент для растяжения hp bar по длине изображения
+        self.sprite = "RFireSpirit1"
+        self.types += ["battle_aura"]
+
+
+OPPONENT_CLASSES_LIST = (Opponent, Warrior, Bird, HealingMage, DefenseMage, DamageMage, ForestSpirit, Golem, FireSpirit)
