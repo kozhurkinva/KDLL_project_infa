@@ -128,6 +128,9 @@ class Level:
         """
         self.screen.blit(self.background_img, (0, 0))
 
+        pygame.draw.rect(self.screen, (255, 0, 0), (200, 10, self.player_health * 20 , 20))
+        pygame.draw.rect(self.screen, (255, 255, 255), (200, 10, 400, 20), 3)
+
         self.draw_text("Money: " + str(self.player_money), self.text_color, 20, self.x_player_money,
                        self.y_player_money)
         self.text_color = (0, 0, 0)
