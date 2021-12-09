@@ -46,8 +46,8 @@ class Creature:
         img = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
         ''' рисует hp bar и его рамку '''
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp / self.alpha * 75, 15))
-        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, 75, 15), 3)
+        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y + 50, self.hp / self.alpha * img.get_width(), 10))
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 50, img.get_width(), 10), 3)
 
     def fight(self, enemy):
         """
