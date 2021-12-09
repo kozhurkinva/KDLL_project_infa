@@ -1,7 +1,4 @@
-import math
-import os.path as path
-
-import pygame.draw  # FIXME пока не доделан vis + мб не всё нужно импортить
+import pygame.draw
 
 
 class Projectile:

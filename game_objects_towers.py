@@ -1,9 +1,6 @@
-import math
-import os.path as path
+import pygame.draw
 
-import pygame.draw  # FIXME пока не доделан vis + мб не всё нужно импортить
-
-from game_objects_projectiles import *
+import game_objects_projectiles as o_p
 
 
 class Tower:
@@ -129,6 +126,7 @@ class Tower:
 
 class TowerSpot(Tower):
     def __init__(self, x, y, enemy_list):
+        """ Пустое место для башен """
         super().__init__(x, y, "never_ready", enemy_list, "TowerSpot")
         self.cost = 0
         self.upgrade_cost = 0
@@ -160,7 +158,7 @@ class ArrowTower(Tower):
             self.reload_time = 35
             self.dmg = 3
         elif self.level == 2:
-            self.upgrade_cost = 50
+            self.upgrade_cost = 0
             self.sprite = self.sprite[0] + "ArrowTower3"
             self.range = 150
             self.reload_time = 30
@@ -178,8 +176,8 @@ class ArrowTower(Tower):
         else:
             sprite = "LArrow"
             self.relocate("L")
-        closest_enemy.projectiles.append(BallisticProjectile(sprite, self.dmg, self.x, self.y, 3, closest_enemy, 0.17))
-        # FIXME координаты вылета пули != x y, а зависят от них, скорость и ускорение - ??? (зависит от карты?)
+        closest_enemy.projectiles.append(
+            o_p.BallisticProjectile(sprite, self.dmg, self.x, self.y, 3, closest_enemy, 0.17))
 
 
 class GunTower(Tower):
@@ -189,9 +187,30 @@ class GunTower(Tower):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
         super().__init__(x, y, "enemy_in_range", enemy_list, "LGunTower1")
         self.cost = GunTower.cost
+        self.upgrade_cost = 20
         self.range = 75
-        self.reload_time = 10
+        self.reload_time = 13
         self.dmg = 1
+
+    def upgrade(self):
+        """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
+        self.charged_time = 0
+        if self.level == 1:
+            self.upgrade_cost = 35
+            self.sprite = self.sprite[0] + "ArrowTower2"
+            self.range = 95
+            self.reload_time = 11
+            self.dmg = 1.1
+        elif self.level == 2:
+            self.upgrade_cost = 0
+            self.sprite = self.sprite[0] + "ArrowTower3"
+            self.range = 125
+            self.reload_time = 9
+            self.dmg = 1.2
+        self.level += 1
+        self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
+        self.image_rect = self.image.get_rect()
+        self.image_rect.topleft = (self.x, self.y)
 
     def action(self, closest_enemy):
         """ Выпускает пулю в closest_enemy """
@@ -201,7 +220,7 @@ class GunTower(Tower):
         else:
             sprite = "LBullet"
             self.relocate("L")
-        closest_enemy.projectiles.append(StraightProjectile(sprite, self.dmg, self.x, self.y, 5, closest_enemy))
+        closest_enemy.projectiles.append(o_p.StraightProjectile(sprite, self.dmg, self.x, self.y, 5, closest_enemy))
 
 
 class BombTower(Tower):
@@ -243,14 +262,14 @@ class BombTower(Tower):
         else:
             self.relocate("L")
         closest_enemy.projectiles.append(
-            BombProjectile("Bomb", self.dmg, self.x, self.y, 2, closest_enemy, 0.17, self.enemy_list))
+            o_p.BombProjectile("Bomb", self.dmg, self.x, self.y, 2, closest_enemy, 0.17, self.enemy_list))
 
 
 class GlowTower(Tower):
-    """ Инициализация подкласса Tower - GlowTower. Светящаяся башня выпускает усиленные временем снаряды """
     cost = 25
 
     def __init__(self, x, y, enemy_list):
+        """ Инициализация подкласса Tower - GlowTower. Светящаяся башня выпускает усиленные временем снаряды """
         super().__init__(x, y, "enemy_in_range", enemy_list, "1GlowTower1")
         self.cost = GlowTower.cost
         self.upgrade_cost = 30
@@ -260,7 +279,7 @@ class GlowTower(Tower):
         self.dmg_up = 1  # коэффициент, на который умножается кол-во секунд простоя
 
     def glow_up(self):
-        """ Изменяет внешний вид маяка в зависимости от времени простоя """
+        """ Изменяет внешний вид маяка в зависимости от времени простоя (спрайт зависит от первой цифры) """
         if self.charged_time > 3 * self.reload_time:
             self.sprite = "4" + self.sprite[1:]
         elif self.charged_time > 2 * self.reload_time:
@@ -274,7 +293,10 @@ class GlowTower(Tower):
         self.image_rect.topleft = (self.x, self.y)
 
     def upgrade(self):
-        """ Улучшение светящуюся башню (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
+        """
+        Улучшение светящуюся башню (увеличивает характеристики и меняет спрайт), запускает заново перезарядку,
+        стоимость и характеристики зависят от номера улучшения (self.level)
+        """
         self.charged_time = 0
         if self.level == 1:
             self.upgrade_cost = 35
@@ -284,7 +306,7 @@ class GlowTower(Tower):
             self.dmg = 1
             self.dmg_up = 1.2
         elif self.level == 2:
-            self.upgrade_cost = 50
+            self.upgrade_cost = 0
             self.sprite = "1GlowTower3"
             self.range = 110
             self.reload_time = 100
@@ -302,6 +324,6 @@ class GlowTower(Tower):
         if self.charged_time > 3 * self.reload_time:
             self.charged_time = 3 * self.reload_time
         closest_enemy.projectiles.append(
-            StraightProjectile(self.sprite[0] + "Glow",
-                               self.dmg + self.dmg_up * (self.charged_time - self.reload_time) / 60, self.x, self.y, 1,
-                               closest_enemy))
+            o_p.StraightProjectile(self.sprite[0] + "Glow",
+                                   self.dmg + self.dmg_up * (self.charged_time - self.reload_time) / 60, self.x, self.y,
+                                   1, closest_enemy))

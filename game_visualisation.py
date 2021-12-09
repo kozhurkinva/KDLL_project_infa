@@ -1,5 +1,6 @@
-from game_objects_creatures import *
-from game_objects_towers import *
+import game_objects_creatures as o_c
+import game_objects_towers as o_t
+import pygame
 
 
 class Level:
@@ -8,7 +9,7 @@ class Level:
         Класс уровня.
         Здесь производится загрузка всех параметров уровня: загружаются текстуры, инициализируется спрайты.
         Данные о данном уровне парсятся из текстового файла level_designs
-        :param level: название текущего уровнея в формате "Level #", где # - номер уровня.
+        :param level: название текущего уровнея в формате "Level X", где X - номер уровня.
         :param screen: поверхность для отрисовки
         """
         # Для игры
@@ -16,11 +17,11 @@ class Level:
         self.player_money = 70
         self.opponents = []
         self.towers = []
-        self.allys = [Blue(200, 200)]
+        self.allys = [o_c.Blue(200, 200)]
 
         # Для настройки уровня
-        self.level = (level.lower()).replace(' ', '')[-1]
-        self.level_name = (level.lower()).replace(' ', '')
+        self.level = (level.lower()).replace(" ", "")[-1]
+        self.level_name = (level.lower()).replace(" ", "")
 
         # Поверхность отрисовки
         self.screen = screen
@@ -46,9 +47,11 @@ class Level:
             int(self.passive_arrow_button_img.get_size()[0] * 0.8),
             int(self.passive_arrow_button_img.get_size()[1] * 0.8)))
         self.passive_bomb_button_img = pygame.transform.scale(self.passive_bomb_button_img, (
-            int(self.passive_bomb_button_img.get_size()[0] * 0.8), int(self.passive_bomb_button_img.get_size()[1] * 0.8)))
+            int(self.passive_bomb_button_img.get_size()[0] * 0.8),
+            int(self.passive_bomb_button_img.get_size()[1] * 0.8)))
         self.passive_glow_button_img = pygame.transform.scale(self.passive_glow_button_img, (
-            int(self.passive_glow_button_img.get_size()[0] * 0.8), int(self.passive_glow_button_img.get_size()[1] * 0.8)))
+            int(self.passive_glow_button_img.get_size()[0] * 0.8),
+            int(self.passive_glow_button_img.get_size()[1] * 0.8)))
 
         # Координаты и параметры для отрисовки изображений
         self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
@@ -95,7 +98,7 @@ class Level:
             design = level_design.read().split()
             for i in range(int(design[1])):
                 x, y = int(design[2 * i + 2]), int(design[2 * i + 3])
-                self.towers += [TowerSpot(x, y, self.opponents)]
+                self.towers += [o_t.TowerSpot(x, y, self.opponents)]
 
     def choosing_buttons_draw(self):
         """
@@ -114,10 +117,8 @@ class Level:
             if self.player_money >= tower_obj.upgrade_cost:
                 self.player_money -= tower_obj.upgrade_cost
                 tower_obj.upgrade()
-                print(self.player_money)
             else:
                 self.text_color = (255, 0, 0)
-                print("You haven't got a money")
         elif tower_obj.sprite == "TowerSpot":
             tower_obj.is_activate = False
 
@@ -132,26 +133,24 @@ class Level:
             tower_obj.is_activate = True
             self.choose_menu_state = False
             self.pressed_index = None
-            print(self.player_money)
         else:
             tower_obj.is_activate = True
             self.choose_menu_state = False
             self.text_color = (255, 0, 0)
-            print("No money")
             return "No money"
 
     def change_buttons_img(self):
-        if self.player_money < ArrowTower.cost:
+        if self.player_money < o_t.ArrowTower.cost:
             self.choosing_buttons["Arrow"].image = self.passive_arrow_button_img
         else:
             self.choosing_buttons["Arrow"].image = self.active_arrow_button_img
 
-        if self.player_money < BombTower.cost:
+        if self.player_money < o_t.BombTower.cost:
             self.choosing_buttons["Bomb"].image = self.passive_bomb_button_img
         else:
             self.choosing_buttons["Bomb"].image = self.active_bomb_button_img
 
-        if self.player_money < GlowTower.cost:
+        if self.player_money < o_t.GlowTower.cost:
             self.choosing_buttons["Glow"].image = self.passive_glow_button_img
         else:
             self.choosing_buttons["Glow"].image = self.active_glow_button_img
@@ -192,33 +191,33 @@ class Level:
                 elif not self.towers[self.pressed_index].is_activate:
                     self.choose_menu_state = True
                     if self.choosing_buttons["Arrow"].is_pressed():
-                        self.towers[self.pressed_index] = ArrowTower(self.towers[self.pressed_index].x,
-                                                                     self.towers[self.pressed_index].y,
-                                                                     self.towers[self.pressed_index].enemy_list)
+                        self.towers[self.pressed_index] = o_t.ArrowTower(self.towers[self.pressed_index].x,
+                                                                         self.towers[self.pressed_index].y,
+                                                                         self.towers[self.pressed_index].enemy_list)
                         if self.check_money(self.towers[self.pressed_index]) == "No money":
-                            self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
-                                                                        self.towers[self.pressed_index].y,
-                                                                        self.towers[self.pressed_index].enemy_list)
+                            self.towers[self.pressed_index] = o_t.TowerSpot(self.towers[self.pressed_index].x,
+                                                                            self.towers[self.pressed_index].y,
+                                                                            self.towers[self.pressed_index].enemy_list)
                             self.pressed_index = None
 
                     elif self.choosing_buttons["Bomb"].is_pressed():
-                        self.towers[self.pressed_index] = BombTower(self.towers[self.pressed_index].x,
-                                                                    self.towers[self.pressed_index].y,
-                                                                    self.towers[self.pressed_index].enemy_list)
-                        if self.check_money(self.towers[self.pressed_index]) == "No money":
-                            self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
+                        self.towers[self.pressed_index] = o_t.BombTower(self.towers[self.pressed_index].x,
                                                                         self.towers[self.pressed_index].y,
                                                                         self.towers[self.pressed_index].enemy_list)
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
+                            self.towers[self.pressed_index] = o_t.TowerSpot(self.towers[self.pressed_index].x,
+                                                                            self.towers[self.pressed_index].y,
+                                                                            self.towers[self.pressed_index].enemy_list)
                             self.pressed_index = None
 
                     elif self.choosing_buttons["Glow"].is_pressed():
-                        self.towers[self.pressed_index] = GlowTower(self.towers[self.pressed_index].x,
-                                                                    self.towers[self.pressed_index].y,
-                                                                    self.towers[self.pressed_index].enemy_list)
-                        if self.check_money(self.towers[self.pressed_index]) == "No money":
-                            self.towers[self.pressed_index] = TowerSpot(self.towers[self.pressed_index].x,
+                        self.towers[self.pressed_index] = o_t.GlowTower(self.towers[self.pressed_index].x,
                                                                         self.towers[self.pressed_index].y,
                                                                         self.towers[self.pressed_index].enemy_list)
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
+                            self.towers[self.pressed_index] = o_t.TowerSpot(self.towers[self.pressed_index].x,
+                                                                            self.towers[self.pressed_index].y,
+                                                                            self.towers[self.pressed_index].enemy_list)
                             self.pressed_index = None
 
                     self.choosing_buttons_draw()
@@ -239,10 +238,10 @@ class Level:
             if opp.finished:
                 self.player_health -= opp.player_damage
                 self.player_money -= opp.loot  # в случае прохода врага деньги не добавляются
-            self.opponents += opp.move_opponent(self.level_name)
+            self.opponents += opp.move_opponent(self.level_name)  # перемещает врагов и добавляет призванных
             for projectile in opp.projectiles:
                 projectile.move(self.screen)
-            opp.draw(self.screen)  # FIXME временно, для тестов
+            opp.draw(self.screen)
 
         for al in self.allys:
             if not al.alive:
@@ -276,7 +275,7 @@ class Level:
             for i in range(len(self.spawn_list[self.wave])):
                 if (not self.wave_timer % self.spawn_list[self.wave][i][3]) and (self.spawn_list[self.wave][i][0] > 0):
                     self.spawn_list[self.wave][i][0] -= 1
-                    for opp in OPPONENT_CLASSES_LIST:
+                    for opp in o_c.OPPONENT_CLASSES_LIST:
                         if opp.__name__ == self.spawn_list[self.wave][i][1]:
                             self.opponents += [opp(self.spawn_list[self.wave][i][2])]
                 num_wave_opp += self.spawn_list[self.wave][i][0]

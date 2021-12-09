@@ -1,7 +1,6 @@
 import math
 import os.path as path
-
-import pygame  # FIXME пока не доделан vis + мб не всё нужно импортить
+import pygame
 
 
 class Creature:
@@ -22,6 +21,7 @@ class Creature:
         self.types = []
         self.projectiles = []
         self.occupied = False  # отвечает за то,сражается ли данное существо в данный момент
+        self.opponent = None
         self.alive = True
         self.alpha = 1
         self.hp_bar_limit = self.hp  # используется для обозначения рамок строки здоровья (не меняется в процессе игры)
@@ -41,29 +41,40 @@ class Creature:
             self.die()
 
     def die(self):
-        """ Существо перестаёт считаться живым, после чего его удалят из числа существ в main-е"""
+        """
+        Существо перестаёт считаться живым, после чего его удалят из числа существ в main-е, а текущий противник
+        существа становится свободен
+        """
         self.alive = False
+        if self.occupied:
+            self.opponent.opponent = None
+            self.opponent.occupied = False
 
     def draw(self, screen):
-        """ Рисует живое существо """
+        """ Рисует живое существо, hp bar и его рамку """
         img = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         screen.blit(img, (self.x, self.y))
-        ''' рисует hp bar и его рамку '''
         pygame.draw.rect(screen, (255, 0, 0), [self.x, self.y + 50, self.hp / self.alpha * img.get_width(), 10])
         pygame.draw.rect(screen, (255, 255, 255), [self.x, self.y + 50, img.get_width(), 10], 3)
 
     def fight(self, enemy):
         """
         Проверяет наличие потенциальных противников (Ally/Opponent) и в случае нахождения поднимает флаг
-        .occupied, останавливая продвижение Opponent-ов; при этом 'сражающимся' будет наноситься урон в соответствии
+        .occupied, останавливая продвижение Opponent-ов; при этом сражающимся будет наноситься урон в соответствии
         с их параметрами dmg
         """
         if enemy == 0:
             self.occupied = False
-        elif (self.x - enemy.x) ** 2 + (self.y - enemy.y) ** 2 <= 3600 and not self.occupied:
-            if "flying" not in self.types:
+            self.opponent = None
+        elif (self.x - enemy.x) ** 2 + (
+                self.y - enemy.y) ** 2 <= enemy.detect_range ** 2 and not self.occupied and "flying" not in self.types:
+            if not enemy.occupied or enemy.opponent == self:
+                self.vx = 0
+                self.vy = 0
                 self.occupied = True
                 enemy.occupied = True
+                enemy.opponent = self
+                self.opponent = enemy
                 self.take_damage(enemy.dmg)
                 enemy.take_damage(self.dmg)
 
@@ -76,9 +87,10 @@ class Ally(Creature):
 class Blue(Ally):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.dmg = 0.1
+        self.dmg = 0.2
         self.hp = 100
         self.alpha = 100
+        self.detect_range = 80
         self.sprite = "Blue"
 
 
@@ -92,6 +104,12 @@ class Opponent(Creature):
         self.finished = False
 
     def move_opponent(self, level_name):
+        """
+
+        Также заряжает призывающую способность магов (self.charge_goal > 0) и вктивирует заряженную
+        :param level_name:
+        :return: список с призванными существами(-ом) или пустой, если никто не был призван
+        """
         map_types = type(self).__mro__
         k = 0
         file = "levels/" + level_name + "/" + str(map_types[0].__name__) + "_" + self.group + "_move_map.txt"
@@ -108,7 +126,6 @@ class Opponent(Creature):
         if self.x == 999999999999999:
             self.x = float(level_map[-1][0])
             self.y = float(level_map[-1][1])
-            print("I've started", self.x, self.y)
         self.move(
             level_map[int(self.x / self.HEIGHT * len(level_map[1]))][int(self.y / self.WIDTH * (len(level_map) - 1))])
         self.distance -= self.speed
@@ -124,10 +141,10 @@ class Opponent(Creature):
         return []
 
     def move(self, an="-"):
-        """FIXME
-
-        :param an: при окончании движения принимает значение stop, затем враг "умирает", а герой получает урон
-        :return:
+        """
+        Отвечает за движение врагов, устанавливает их направление движения, скорости и координаты по осям X и Y
+        :param an: угол повората врага при смени прямолинейной траектории (при значении "-" траектория не меняется,
+        при окончании движения принимает значение stop, затем враг "умирает", а герой получает урон)
         """
         if not self.occupied:
             if an == "stop":
@@ -151,12 +168,12 @@ class Opponent(Creature):
                 self.sprite = "R" + self.sprite[1:]
             else:
                 self.sprite = "L" + self.sprite[1:]
-        return 0
 
     def summon(self):
         """
         В соответствии с параметрами призывающего мага :return: возвращает список новых существ, призванных магом
         """
+        new_one = None
         new_creatures = []
         for i in range(self.spawned_creature[1]):
             if self.spawned_creature[0] == "ForestSpirit":
@@ -170,6 +187,7 @@ class Opponent(Creature):
             new_one.x = self.x
             new_one.y = self.y
             new_one.move_an = self.move_an
+            new_one.distance = self.distance
             new_creatures += [new_one]
         return new_creatures
 

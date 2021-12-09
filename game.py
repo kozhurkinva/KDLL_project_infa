@@ -1,11 +1,5 @@
-import ctypes
-
+import game_menus as men
 import pygame.mixer
-
-from game_visualisation import *
-from game_objects_creatures import *
-from game_objects_towers import *
-from game_menus import *
 
 
 class Game:
@@ -33,20 +27,14 @@ class Game:
         self.shoottSound = pygame.mixer.Sound("shoot1.wav")
         self.takedamage = pygame.mixer.Sound("takedam1.wav")
 
-        # Game variables and counters
-        # self.level_name = 0
-        # self.tower_types = [0] * 999
-        # self.towers = []
-        # self.bullets = []
-
         # Объект уровня
         self.level = None
 
         # Меню и пауза
-        self.main_menu = MainMenu(self)
-        self.volume_set = VolumeMenu(self)
-        self.credits = CreditsMenu(self)
-        self.levels = LevelsMenu(self)
+        self.main_menu = men.MainMenu(self)
+        self.volume_set = men.VolumeMenu(self)
+        self.credits = men.CreditsMenu(self)
+        self.levels = men.LevelsMenu(self)
         self.curr_menu = self.main_menu
         self.press_count = 0
         self.is_paused = False
