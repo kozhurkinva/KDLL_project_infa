@@ -35,15 +35,28 @@ class Level:
         self.passive_bomb_button_img = pygame.image.load("Textures/LockedBombTower.png").convert_alpha()
         self.passive_glow_button_img = pygame.image.load("Textures/LockedGlowTower.png").convert_alpha()
 
+        self.active_arrow_button_img = pygame.transform.scale(self.active_arrow_button_img, (
+            self.active_arrow_button_img.get_size()[0] * 0.8, self.active_arrow_button_img.get_size()[1] * 0.8))
+        self.active_bomb_button_img = pygame.transform.scale(self.active_bomb_button_img, (
+            self.active_bomb_button_img.get_size()[0] * 0.8, self.active_bomb_button_img.get_size()[1] * 0.8))
+        self.active_glow_button_img = pygame.transform.scale(self.active_glow_button_img, (
+            self.active_glow_button_img.get_size()[0] * 0.8, self.active_glow_button_img.get_size()[1] * 0.8))
+        self.passive_arrow_button_img = pygame.transform.scale(self.passive_arrow_button_img, (
+            self.passive_arrow_button_img.get_size()[0] * 0.8, self.passive_arrow_button_img.get_size()[1] * 0.8))
+        self.passive_bomb_button_img = pygame.transform.scale(self.passive_bomb_button_img, (
+            self.passive_bomb_button_img.get_size()[0] * 0.8, self.passive_bomb_button_img.get_size()[1] * 0.8))
+        self.passive_glow_button_img = pygame.transform.scale(self.passive_glow_button_img, (
+            self.passive_glow_button_img.get_size()[0] * 0.8, self.passive_glow_button_img.get_size()[1] * 0.8))
+
         # Координаты и параметры для отрисовки изображений
         self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
         self.x_player_money, self.y_player_money = self.screen.get_rect().topright
         self.x_player_money -= 60
         self.y_player_money += 20
         self.choosing_buttons_poss = {
-            "AT_pos": (self.x_buttons - self.active_bomb_button_img.get_rect().size[0], self.y_buttons),
-            "BT_pos": (self.x_buttons, self.y_buttons),
-            "GT_pos": (self.x_buttons + self.active_bomb_button_img.get_rect().size[0], self.y_buttons)
+            "AT_pos": (self.x_buttons - self.active_bomb_button_img.get_rect().size[0] * 1.5, self.y_buttons + 30),
+            "BT_pos": (self.x_buttons, self.y_buttons + 30),
+            "GT_pos": (self.x_buttons + self.active_bomb_button_img.get_rect().size[0] * 1.5, self.y_buttons + 30)
         }
         self.text_color = (0, 0, 0)
 
