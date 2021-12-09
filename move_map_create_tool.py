@@ -1,12 +1,13 @@
 import math
 import pygame
-import game_constants as g_c
 
 pygame.init()
 clock = pygame.time.Clock()
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+WIDTH = 800
+HEIGHT = 600
 
 # ввод
 size = list(map(int, input("размер в клетках в формате AxB: ").split("x")))
@@ -14,8 +15,8 @@ file_name = input("класс: ") + "_"
 file_name += input("группа: ") + "_move_map.txt"
 
 # первичная обработка данных, создание пустых массивов
-screen = pygame.display.set_mode((g_c.WIDTH, g_c.HEIGHT))
-rect_size = [g_c.WIDTH / size[0], g_c.HEIGHT / size[1]]
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+rect_size = [WIDTH / size[0], HEIGHT / size[1]]
 map_info = []
 for i in range(size[1]):
     map_info += [["-"] * size[0]]
@@ -29,9 +30,9 @@ while not finished:
     # визуализация процесса
     screen.fill(WHITE)
     for i in range(1, size[0]):
-        pygame.draw.line(screen, BLACK, (i * rect_size[0], 0), (i * rect_size[0], g_c.HEIGHT))
+        pygame.draw.line(screen, BLACK, (i * rect_size[0], 0), (i * rect_size[0], HEIGHT))
     for j in range(1, size[1]):
-        pygame.draw.line(screen, BLACK, (0, j * rect_size[1]), (g_c.WIDTH, j * rect_size[1]))
+        pygame.draw.line(screen, BLACK, (0, j * rect_size[1]), (WIDTH, j * rect_size[1]))
     if len(move_trajectory) >= 2:
         for i in range(len(move_trajectory) - 1):
             pygame.draw.line(screen, RED,
@@ -55,7 +56,7 @@ while not finished:
     pygame.display.update()
     clock.tick(30)
 
-image = pygame.surface.Surface((g_c.WIDTH, g_c.HEIGHT), pygame.SRCALPHA)
+image = pygame.surface.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 color = list(map(int, input("цвет: ").split()))
 width = int(input("ширина: "))
 for i in range(len(move_trajectory) - 1):
