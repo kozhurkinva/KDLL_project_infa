@@ -36,18 +36,19 @@ class Level:
         self.passive_glow_button_img = pygame.image.load("Textures/LockedGlowTower.png").convert_alpha()
 
         self.active_arrow_button_img = pygame.transform.scale(self.active_arrow_button_img, (
-            self.active_arrow_button_img.get_size()[0] * 0.8, self.active_arrow_button_img.get_size()[1] * 0.8))
+            int(self.active_arrow_button_img.get_size()[0] * 0.8),
+            int(self.active_arrow_button_img.get_size()[1] * 0.8)))
         self.active_bomb_button_img = pygame.transform.scale(self.active_bomb_button_img, (
-            self.active_bomb_button_img.get_size()[0] * 0.8, self.active_bomb_button_img.get_size()[1] * 0.8))
+            int(self.active_bomb_button_img.get_size()[0] * 0.8), int(self.active_bomb_button_img.get_size()[1] * 0.8)))
         self.active_glow_button_img = pygame.transform.scale(self.active_glow_button_img, (
-            self.active_glow_button_img.get_size()[0] * 0.8, self.active_glow_button_img.get_size()[1] * 0.8))
+            int(self.active_glow_button_img.get_size()[0] * 0.8), int(self.active_glow_button_img.get_size()[1] * 0.8)))
         self.passive_arrow_button_img = pygame.transform.scale(self.passive_arrow_button_img, (
-            self.passive_arrow_button_img.get_size()[0] * 0.8, self.passive_arrow_button_img.get_size()[1] * 0.8))
+            int(self.passive_arrow_button_img.get_size()[0] * 0.8),
+            int(self.passive_arrow_button_img.get_size()[1] * 0.8)))
         self.passive_bomb_button_img = pygame.transform.scale(self.passive_bomb_button_img, (
-            self.passive_bomb_button_img.get_size()[0] * 0.8, self.passive_bomb_button_img.get_size()[1] * 0.8))
+            int(self.passive_bomb_button_img.get_size()[0] * 0.8), int(self.passive_bomb_button_img.get_size()[1] * 0.8)))
         self.passive_glow_button_img = pygame.transform.scale(self.passive_glow_button_img, (
-            self.passive_glow_button_img.get_size()[0] * 0.8, self.passive_glow_button_img.get_size()[1] * 0.8))
-
+            int(self.passive_glow_button_img.get_size()[0] * 0.8), int(self.passive_glow_button_img.get_size()[1] * 0.8)))
 
         # Координаты и параметры для отрисовки изображений
         self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
