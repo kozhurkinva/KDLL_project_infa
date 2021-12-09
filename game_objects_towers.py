@@ -193,17 +193,17 @@ class GunTower(Tower):
         self.dmg = 1
 
     def upgrade(self):
-        """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
+        """ Улучшение башни стрелков (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
         self.charged_time = 0
         if self.level == 1:
             self.upgrade_cost = 35
-            self.sprite = self.sprite[0] + "ArrowTower2"
+            self.sprite = self.sprite[0] + "GunTower2"
             self.range = 95
             self.reload_time = 11
             self.dmg = 1.1
         elif self.level == 2:
             self.upgrade_cost = 0
-            self.sprite = self.sprite[0] + "ArrowTower3"
+            self.sprite = self.sprite[0] + "GunTower3"
             self.range = 125
             self.reload_time = 9
             self.dmg = 1.2
@@ -231,7 +231,7 @@ class BombTower(Tower):
         super().__init__(x, y, "ground_enemy_in_range", enemy_list, "LBombTower1")
         self.cost = BombTower.cost
         self.upgrade_cost = 30
-        self.range = 60
+        self.range = 70
         self.reload_time = 150
         self.dmg = 10
 
@@ -241,13 +241,13 @@ class BombTower(Tower):
         if self.level == 1:
             self.upgrade_cost = 35
             self.sprite = self.sprite[0] + "BombTower2"
-            self.range = 70
+            self.range = 80
             self.reload_time = 140
             self.dmg = 12
         elif self.level == 2:
             self.upgrade_cost = 50
             self.sprite = self.sprite[0] + "BombTower3"
-            self.range = 80
+            self.range = 90
             self.reload_time = 130
             self.dmg = 15
         self.level += 1
@@ -261,7 +261,7 @@ class BombTower(Tower):
             self.relocate("R")
         else:
             self.relocate("L")
-        closest_enemy.projectiles.append(
+        o_p.global_projectiles.append(
             o_p.BombProjectile("Bomb", self.dmg, self.x, self.y, 2, closest_enemy, 0.17, self.enemy_list))
 
 

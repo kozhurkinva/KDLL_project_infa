@@ -1,5 +1,7 @@
 import pygame.draw
 
+global_projectiles = []  # снаряды, не привязанные к врагам
+
 
 class Projectile:
     def __init__(self, sprite, dmg, x, y, shot_creature):
@@ -105,7 +107,7 @@ class BombProjectile(BallisticProjectile):
         self.y += self.vy
         self.vy += self.a
         if self.time_of_flight <= 0:
-            self.shot_creature.projectiles.pop(self.shot_creature.projectiles.index(self))
+            global_projectiles.pop(global_projectiles.index(self))
             self.blow(screen)
         else:
             self.draw(screen)

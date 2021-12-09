@@ -1,5 +1,6 @@
 import game_objects_creatures as o_c
 import game_objects_towers as o_t
+from game_objects_projectiles import global_projectiles
 import pygame
 
 
@@ -249,6 +250,9 @@ class Level:
             for projectile in al.projectiles:
                 projectile.move(self.screen)
             al.draw(self.screen)
+
+        for projectile in global_projectiles:
+            projectile.move(self.screen)
 
     def draw_text(self, text, color, size, x, y):
         """
