@@ -127,10 +127,12 @@ class Level:
         Основная отрисовка уровня
         """
         self.screen.blit(self.background_img, (0, 0))
+        """Отрисовка шкалы здоровья игрока"""
+        pygame.draw.rect(self.screen, (255, 0, 0), (250, 8, self.player_health * 20 , 20))
+        pygame.draw.rect(self.screen, (255, 255, 255), (250, 8, 400, 20), 3)
 
-        pygame.draw.rect(self.screen, (255, 0, 0), (200, 10, self.player_health * 20 , 20))
-        pygame.draw.rect(self.screen, (255, 255, 255), (200, 10, 400, 20), 3)
-
+        self.draw_text("HP: " + str(self.player_health), self.text_color, 20, 200,
+                       self.y_player_money)
         self.draw_text("Money: " + str(self.player_money), self.text_color, 20, self.x_player_money,
                        self.y_player_money)
         self.text_color = (0, 0, 0)
