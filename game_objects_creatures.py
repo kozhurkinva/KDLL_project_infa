@@ -227,7 +227,7 @@ class HealingMage(Opponent):
         self.types += ["spawns"]
         self.spawned_creature = ["ForestSpirit", 1]
         self.charge = 0
-        self.charge_goal = 180
+        self.charge_goal = 360
 
 
 class DefenseMage(Opponent):
@@ -243,7 +243,7 @@ class DefenseMage(Opponent):
         self.types += ["spawns"]
         self.spawned_creature = ["Golem", 1]
         self.charge = 0
-        self.charge_goal = 420
+        self.charge_goal = 780
 
 
 class DamageMage(Opponent):
@@ -259,7 +259,7 @@ class DamageMage(Opponent):
         self.types += ["spawns"]
         self.spawned_creature = ["FireSpirit", 1]
         self.charge = 0
-        self.charge_goal = 180
+        self.charge_goal = 360
 
 
 class ForestSpirit(Opponent):
