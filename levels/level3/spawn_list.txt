@@ -1,24 +1,38 @@
-1 Golem gamma 1
-5 Warrior alpha 60
-5 Warrior beta 60
+2 Warrior alpha 60
+2 Warrior beta 60
 wave
 600 - - 1
 wave
-2 Golem gamma 60
-7 Warrior alpha 60
+3 Warrior alpha 60
+2 Warrior beta 60
+wave
+600 - - 1
+wave
+1 Golem gamma 1
+1 Warrior alpha 60
+2 Warrior beta 60
+wave
+600 - - 1
+wave
+1 Golem alpha 60
 7 Warrior beta 60
 wave
 600 - - 1
 wave
-2 Golem gamma 60
-3 Golem alpha 60
-9 Warrior beta 60
+1 Golem beta 60
+7 Warrior alpha 60
 wave
 600 - - 1
 wave
-2 Golem gamma 60
-3 Golem beta 60
-9 Warrior alpha 60
+3 Warrior alpha 60
+3 Warrior beta 60
+1 Golem gamma 1
+wave
+600 - - 1
+wave
+1 Golem gamma 1
+1 Golem alpha 1
+1 Golem beta 1
 wave
 600 - - 1
 wave
