@@ -3,7 +3,7 @@ from game_level import *
 import pygame.mixer
 import pygame
 
-
+from os import system
 class Game:
     def __init__(self):
         """
@@ -83,6 +83,8 @@ class Game:
         клавиши на клавиатуре и выхода из игры
         """
         for event in pygame.event.get():
+            print(f'x = {pygame.mouse.get_pos()[0]}')
+            print(f'y = {pygame.mouse.get_pos()[1]}')
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
                 self.curr_menu.run_display = False
