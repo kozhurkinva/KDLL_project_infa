@@ -172,12 +172,12 @@ class Level:
     def check_state(self):
         if not self.opponents and self.player_health >= 0:
             self.game.playing = False
-            self.draw_text("Ah Gooood! You Win!!!", self.game.WHITE, 50, self.game.mid_w, self.game.mid_h)
-            self.game.curr_menu = self.game.main_menu
+            self.game.curr_menu = self.game.winlose
+            self.game.curr_menu.state = True
         elif self.player_health < 0:
             self.game.playing = False
-            self.draw_text("Ah Shit! You Lose!", (255, 255, 255), 50, self.game.mid_w, self.game.mid_h)
-            self.game.curr_menu = self.game.main_menu
+            self.game.curr_menu = self.game.winlose
+            self.game.curr_menu.state = False
 
     def draw(self):
         """
@@ -188,7 +188,8 @@ class Level:
         self.spawn_opp()
 
         self.player_health_draw()
-        # self.check_state()
+
+        self.check_state()
 
         for opp in self.opponents:
             for al in ([0] + self.allys):

@@ -37,6 +37,7 @@ class Game:
         self.volume_set = VolumeMenu(self)
         self.credits = CreditsMenu(self)
         self.levels = LevelsMenu(self)
+        self.winlose = WinLoseMenu(self)
         self.curr_menu = self.main_menu
         self.press_count = 0
         self.is_paused = False

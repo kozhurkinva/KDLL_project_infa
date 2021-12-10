@@ -234,3 +234,23 @@ class CreditsMenu(Menu):
             self.game.draw_text("Credits", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 20)
             self.game.draw_text("Made by me", 15, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 10)
             self.blit_screen()
+
+
+class WinLoseMenu(Menu):
+    def __init__(self, game):
+        Menu.__init__(self, game)
+        self.state = False
+
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events()
+            if self.game.START_KEY or self.game.BACK_KEY:
+                self.game.curr_menu = self.game.main_menu
+                self.run_display = False
+            self.game.display.fill(self.game.BLACK)
+            if self.state:
+                self.game.draw_text("Ah Gooood! You Win!!!", 50, self.game.mid_w, self.game.mid_h - 20)
+            else:
+                self.game.draw_text("Ah Shit! You Lose!", 50, self.game.mid_w, self.game.mid_h + 10)
+            self.blit_screen()
