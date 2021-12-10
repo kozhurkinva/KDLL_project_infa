@@ -143,16 +143,16 @@ class ArrowTower(Tower):
         super().__init__(x, y, "enemy_in_range", enemy_list, "LArrowTower1")
         self.level = 1
         self.cost = ArrowTower.cost
-        self.upgrade_cost = 20
+        self.upgrade_cost = 30
         self.range = 150
-        self.reload_time = 40
+        self.reload_time = 30
         self.dmg = 3
 
     def upgrade(self):
         """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
         self.charged_time = 0
         if self.level == 1:
-            self.upgrade_cost = 35
+            self.upgrade_cost = 45
             self.sprite = self.sprite[0] + "ArrowTower2"
             self.range = 170
             self.reload_time = 35
@@ -187,26 +187,26 @@ class GunTower(Tower):
         """ Инициализация подкласса Tower - GunTower. Башня стрелков выпускает пули """
         super().__init__(x, y, "enemy_in_range", enemy_list, "LGunTower1")
         self.cost = GunTower.cost
-        self.upgrade_cost = 20
+        self.upgrade_cost = 30
         self.range = 100
         self.reload_time = 13
-        self.dmg = 2
+        self.dmg = 1.2
 
     def upgrade(self):
         """ Улучшение башни стрелков (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
         self.charged_time = 0
         if self.level == 1:
-            self.upgrade_cost = 35
+            self.upgrade_cost = 50
             self.sprite = self.sprite[0] + "GunTower2"
             self.range = 125
             self.reload_time = 11
-            self.dmg = 2.4
+            self.dmg = 1.5
         elif self.level == 2:
             self.upgrade_cost = 0
             self.sprite = self.sprite[0] + "GunTower3"
             self.range = 150
             self.reload_time = 9
-            self.dmg = 3
+            self.dmg = 1.8
         self.level += 1
         self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
@@ -230,7 +230,7 @@ class BombTower(Tower):
         """ Инициализация подкласса Tower - BombTower. Башня подрывников выпускает не самонаводящиеся бомбы """
         super().__init__(x, y, "ground_enemy_in_range", enemy_list, "LBombTower1")
         self.cost = BombTower.cost
-        self.upgrade_cost = 30
+        self.upgrade_cost = 40
         self.range = 90
         self.reload_time = 120
         self.dmg = 20
@@ -239,13 +239,13 @@ class BombTower(Tower):
         """ Улучшение башни подрывников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
         self.charged_time = 0
         if self.level == 1:
-            self.upgrade_cost = 35
+            self.upgrade_cost = 55
             self.sprite = self.sprite[0] + "BombTower2"
             self.range = 110
             self.reload_time = 110
             self.dmg = 30
         elif self.level == 2:
-            self.upgrade_cost = 50
+            self.upgrade_cost = 0
             self.sprite = self.sprite[0] + "BombTower3"
             self.range = 90
             self.reload_time = 130
@@ -299,7 +299,7 @@ class GlowTower(Tower):
         """
         self.charged_time = 0
         if self.level == 1:
-            self.upgrade_cost = 35
+            self.upgrade_cost = 45
             self.sprite = "1GlowTower2"
             self.range = 125
             self.reload_time = 100
