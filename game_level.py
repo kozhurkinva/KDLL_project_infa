@@ -193,7 +193,7 @@ class Level:
         self.text_color = (0, 0, 0)
 
     def check_state(self):
-        if not self.opponents and self.player_health >= 0:
+        if self.wave == len(self.spawn_list) and not self.opponents and self.player_health >= 0:
             self.game.playing = False
             self.game.curr_menu = self.game.winlose
             self.game.curr_menu.state = True
@@ -289,8 +289,18 @@ class Level:
 
                     elif self.choosing_buttons["Gun"].is_pressed():
                         self.towers[self.pressed_index] = o_t.GunTower(self.towers[self.pressed_index].x,
-                                                                        self.towers[self.pressed_index].y,
-                                                                        self.towers[self.pressed_index].enemy_list)
+                                                                       self.towers[self.pressed_index].y,
+                                                                       self.towers[self.pressed_index].enemy_list)
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
+                            self.towers[self.pressed_index] = o_t.TowerSpot(self.towers[self.pressed_index].x,
+                                                                            self.towers[self.pressed_index].y,
+                                                                            self.towers[self.pressed_index].enemy_list)
+                            self.pressed_index = None
+
+                    elif self.choosing_buttons["Gun"].is_pressed():
+                        self.towers[self.pressed_index] = o_t.GunTower(self.towers[self.pressed_index].x,
+                                                                       self.towers[self.pressed_index].y,
+                                                                       self.towers[self.pressed_index].enemy_list)
                         if self.check_money(self.towers[self.pressed_index]) == "No money":
                             self.towers[self.pressed_index] = o_t.TowerSpot(self.towers[self.pressed_index].x,
                                                                             self.towers[self.pressed_index].y,
@@ -381,4 +391,3 @@ class Button:
         :param surface: поверхность отрисовки
         """
         surface.blit(self.image, (self.rect.x, self.rect.y))
-
