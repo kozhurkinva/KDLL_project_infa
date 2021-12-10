@@ -144,9 +144,9 @@ class ArrowTower(Tower):
         self.level = 1
         self.cost = ArrowTower.cost
         self.upgrade_cost = 20
-        self.range = 100
+        self.range = 150
         self.reload_time = 40
-        self.dmg = 2
+        self.dmg = 3
 
     def upgrade(self):
         """ Улучшение башни лучников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
@@ -154,15 +154,15 @@ class ArrowTower(Tower):
         if self.level == 1:
             self.upgrade_cost = 35
             self.sprite = self.sprite[0] + "ArrowTower2"
-            self.range = 120
+            self.range = 170
             self.reload_time = 35
-            self.dmg = 3
+            self.dmg = 5
         elif self.level == 2:
             self.upgrade_cost = 0
             self.sprite = self.sprite[0] + "ArrowTower3"
-            self.range = 150
+            self.range = 180
             self.reload_time = 30
-            self.dmg = 5
+            self.dmg = 6
         self.level += 1
         self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
@@ -188,9 +188,9 @@ class GunTower(Tower):
         super().__init__(x, y, "enemy_in_range", enemy_list, "LGunTower1")
         self.cost = GunTower.cost
         self.upgrade_cost = 20
-        self.range = 75
+        self.range = 100
         self.reload_time = 13
-        self.dmg = 1
+        self.dmg = 2
 
     def upgrade(self):
         """ Улучшение башни стрелков (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
@@ -198,15 +198,15 @@ class GunTower(Tower):
         if self.level == 1:
             self.upgrade_cost = 35
             self.sprite = self.sprite[0] + "GunTower2"
-            self.range = 95
+            self.range = 125
             self.reload_time = 11
-            self.dmg = 1.1
+            self.dmg = 2.4
         elif self.level == 2:
             self.upgrade_cost = 0
             self.sprite = self.sprite[0] + "GunTower3"
-            self.range = 125
+            self.range = 150
             self.reload_time = 9
-            self.dmg = 1.2
+            self.dmg = 3
         self.level += 1
         self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
@@ -231,9 +231,9 @@ class BombTower(Tower):
         super().__init__(x, y, "ground_enemy_in_range", enemy_list, "LBombTower1")
         self.cost = BombTower.cost
         self.upgrade_cost = 30
-        self.range = 70
-        self.reload_time = 150
-        self.dmg = 10
+        self.range = 90
+        self.reload_time = 120
+        self.dmg = 20
 
     def upgrade(self):
         """ Улучшение башни подрывников (увеличивает характеристики и меняет спрайт), запускает заново перезарядку """
@@ -241,15 +241,15 @@ class BombTower(Tower):
         if self.level == 1:
             self.upgrade_cost = 35
             self.sprite = self.sprite[0] + "BombTower2"
-            self.range = 80
-            self.reload_time = 140
-            self.dmg = 12
+            self.range = 110
+            self.reload_time = 110
+            self.dmg = 30
         elif self.level == 2:
             self.upgrade_cost = 50
             self.sprite = self.sprite[0] + "BombTower3"
             self.range = 90
             self.reload_time = 130
-            self.dmg = 15
+            self.dmg = 45
         self.level += 1
         self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
@@ -275,8 +275,8 @@ class GlowTower(Tower):
         self.upgrade_cost = 30
         self.range = 100
         self.reload_time = 100
-        self.dmg = 2
-        self.dmg_up = 1  # коэффициент, на который умножается кол-во секунд простоя
+        self.dmg = 5
+        self.dmg_up = 1.7  # коэффициент, на который умножается кол-во секунд простоя
 
     def glow_up(self):
         """ Изменяет внешний вид маяка в зависимости от времени простоя (спрайт зависит от первой цифры) """
@@ -301,16 +301,17 @@ class GlowTower(Tower):
         if self.level == 1:
             self.upgrade_cost = 35
             self.sprite = "1GlowTower2"
-            self.range = 100
-            self.reload_time = 110
-            self.dmg = 1
-            self.dmg_up = 1.2
+            self.range = 125
+            self.reload_time = 100
+            self.dmg = 7
+            self.dmg_up = 2.5
         elif self.level == 2:
             self.upgrade_cost = 0
             self.sprite = "1GlowTower3"
-            self.range = 110
+            self.range = 150
             self.reload_time = 100
-            self.dmg_up = 1.4
+            self.dmg = 10
+            self.dmg_up = 4
         self.level += 1
         self.image = pygame.image.load("Textures/" + self.sprite + ".png").convert_alpha()
         self.image_rect = self.image.get_rect()
