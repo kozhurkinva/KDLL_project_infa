@@ -226,7 +226,7 @@ class HealingMage(Opponent):
         self.player_damage = 15
         self.alpha = 150  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RHealingMage1"
-        self.types += ["healing_aura", "spawns"]
+        self.types += ["spawns"]
         self.spawned_creature = ["ForestSpirit", 1]
         self.charge = 0
         self.charge_goal = 180
@@ -242,7 +242,7 @@ class DefenseMage(Opponent):
         self.player_damage = 15
         self.alpha = 500  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RDefenseMage1"
-        self.types += ["protecting_aura", "spawns"]
+        self.types += ["spawns"]
         self.spawned_creature = ["Golem", 1]
         self.charge = 0
         self.charge_goal = 420
@@ -258,7 +258,7 @@ class DamageMage(Opponent):
         self.player_damage = 15
         self.alpha = 350  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RDamageMage1"
-        self.types += ["battle_aura", "spawns"]
+        self.types += ["spawns"]
         self.spawned_creature = ["FireSpirit", 1]
         self.charge = 0
         self.charge_goal = 180
@@ -274,7 +274,7 @@ class ForestSpirit(Opponent):
         self.player_damage = 3
         self.alpha = 3  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RForestSpirit1"
-        self.types += ["healing_aura"]
+        self.types += ["flying"]
 
 
 class Golem(Opponent):
@@ -287,7 +287,6 @@ class Golem(Opponent):
         self.player_damage = 3
         self.alpha = 80  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RGolem1"
-        self.types += ["damage_absorption"]
 
 
 class FireSpirit(Opponent):
@@ -300,7 +299,7 @@ class FireSpirit(Opponent):
         self.player_damage = 3
         self.alpha = 3  # коэфициент для растяжения hp bar по длине изображения
         self.sprite = "RFireSpirit1"
-        self.types += ["battle_aura"]
+        self.types += ["flying"]
 
 
 OPPONENT_CLASSES_LIST = (Opponent, Warrior, Bird, HealingMage, DefenseMage, DamageMage, ForestSpirit, Golem, FireSpirit)
