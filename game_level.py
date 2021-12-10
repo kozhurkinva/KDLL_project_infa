@@ -34,9 +34,11 @@ class Level:
         self.active_arrow_button_img = pygame.image.load("Textures/RArrowTower1.png").convert_alpha()
         self.active_bomb_button_img = pygame.image.load("Textures/RBombTower1.png").convert_alpha()
         self.active_glow_button_img = pygame.image.load("Textures/1GlowTower1.png").convert_alpha()
+        self.active_gun_button_img = pygame.image.load("Textures/RGunTower1.png").convert_alpha()
         self.passive_arrow_button_img = pygame.image.load("Textures/LockedArrowTower.png").convert_alpha()
         self.passive_bomb_button_img = pygame.image.load("Textures/LockedBombTower.png").convert_alpha()
         self.passive_glow_button_img = pygame.image.load("Textures/LockedGlowTower.png").convert_alpha()
+        self.passive_gun_button_img = pygame.image.load("Textures/LockedBulletTower.png").convert_alpha()
 
         # Масштабирование
         self.active_arrow_button_img = pygame.transform.scale(self.active_arrow_button_img, (
@@ -46,6 +48,8 @@ class Level:
             int(self.active_bomb_button_img.get_size()[0] * 0.8), int(self.active_bomb_button_img.get_size()[1] * 0.8)))
         self.active_glow_button_img = pygame.transform.scale(self.active_glow_button_img, (
             int(self.active_glow_button_img.get_size()[0] * 0.8), int(self.active_glow_button_img.get_size()[1] * 0.8)))
+        self.active_gun_button_img = pygame.transform.scale(self.active_gun_button_img, (
+            int(self.active_gun_button_img.get_size()[0] * 0.8), int(self.active_gun_button_img.get_size()[1] * 0.8)))
         self.passive_arrow_button_img = pygame.transform.scale(self.passive_arrow_button_img, (
             int(self.passive_arrow_button_img.get_size()[0] * 0.8),
             int(self.passive_arrow_button_img.get_size()[1] * 0.8)))
@@ -55,6 +59,8 @@ class Level:
         self.passive_glow_button_img = pygame.transform.scale(self.passive_glow_button_img, (
             int(self.passive_glow_button_img.get_size()[0] * 0.8),
             int(self.passive_glow_button_img.get_size()[1] * 0.8)))
+        self.passive_gun_button_img = pygame.transform.scale(self.passive_gun_button_img, (
+            int(self.passive_gun_button_img.get_size()[0] * 0.8), int(self.passive_gun_button_img.get_size()[1] * 0.8)))
 
         # Координаты и параметры для отрисовки изображений
         self.x_buttons, self.y_buttons = self.screen.get_rect().midtop
@@ -62,9 +68,10 @@ class Level:
         self.x_player_money -= 60
         self.y_player_money += 20
         self.choosing_buttons_poss = {
-            "AT_pos": (self.x_buttons - self.active_bomb_button_img.get_rect().size[0] * 1.5, self.y_buttons + 30),
-            "BT_pos": (self.x_buttons, self.y_buttons + 30),
-            "GT_pos": (self.x_buttons + self.active_bomb_button_img.get_rect().size[0] * 1.5, self.y_buttons + 30)
+            "AT_pos": (self.x_buttons - self.active_bomb_button_img.get_rect().size[0] * 2.25, self.y_buttons + 30),
+            "BT_pos": (self.x_buttons - self.active_bomb_button_img.get_rect().size[0] * 1.5 / 2, self.y_buttons + 30),
+            "GT_pos": (self.x_buttons + self.active_bomb_button_img.get_rect().size[0] * 1.5 / 2, self.y_buttons + 30),
+            "GunT_pos": (self.x_buttons + self.active_bomb_button_img.get_rect().size[0] * 2.25, self.y_buttons + 30)
         }
         self.text_color = (0, 0, 0)
 
@@ -75,7 +82,9 @@ class Level:
             "Bomb": Button(self.choosing_buttons_poss["BT_pos"][0], self.choosing_buttons_poss["BT_pos"][1],
                            self.active_bomb_button_img, 1),
             "Glow": Button(self.choosing_buttons_poss["GT_pos"][0], self.choosing_buttons_poss["GT_pos"][1],
-                           self.active_glow_button_img, 1)
+                           self.active_glow_button_img, 1),
+            "Gun": Button(self.choosing_buttons_poss["GunT_pos"][0], self.choosing_buttons_poss["GunT_pos"][1],
+                          self.active_gun_button_img, 1)
         }
         self.cancel_button = Button(0, 0, self.screen, 1, mouse_type=2)
 
@@ -110,6 +119,7 @@ class Level:
         self.choosing_buttons["Arrow"].draw(self.screen)
         self.choosing_buttons["Bomb"].draw(self.screen)
         self.choosing_buttons["Glow"].draw(self.screen)
+        self.choosing_buttons["Gun"].draw(self.screen)
 
     def check_upgrade(self, tower_obj):
         """
@@ -157,6 +167,11 @@ class Level:
             self.choosing_buttons["Glow"].image = self.passive_glow_button_img
         else:
             self.choosing_buttons["Glow"].image = self.active_glow_button_img
+
+        if self.player_money < o_t.GunTower.cost:
+            self.choosing_buttons["Gun"].image = self.passive_gun_button_img
+        else:
+            self.choosing_buttons["Gun"].image = self.active_gun_button_img
 
     def player_health_draw(self):
         # Отрисовка шкалы здоровья игрока
@@ -264,6 +279,16 @@ class Level:
                                                                             self.towers[self.pressed_index].enemy_list)
                             self.pressed_index = None
 
+                    elif self.choosing_buttons["Gun"].is_pressed():
+                        self.towers[self.pressed_index] = o_t.GunTower(self.towers[self.pressed_index].x,
+                                                                        self.towers[self.pressed_index].y,
+                                                                        self.towers[self.pressed_index].enemy_list)
+                        if self.check_money(self.towers[self.pressed_index]) == "No money":
+                            self.towers[self.pressed_index] = o_t.TowerSpot(self.towers[self.pressed_index].x,
+                                                                            self.towers[self.pressed_index].y,
+                                                                            self.towers[self.pressed_index].enemy_list)
+                            self.pressed_index = None
+
                     self.choosing_buttons_draw()
 
                     if self.cancel_button.is_pressed():
@@ -348,3 +373,4 @@ class Button:
         :param surface: поверхность отрисовки
         """
         surface.blit(self.image, (self.rect.x, self.rect.y))
+
