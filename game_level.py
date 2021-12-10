@@ -116,6 +116,14 @@ class Level:
         """
         Отрисовка кнопок выбора башни для постройки
         """
+        pygame.draw.rect(
+            self.screen,
+            (255, 255, 255),
+            (self.choosing_buttons_poss["AT_pos"][0], self.choosing_buttons_poss["AT_pos"][1],
+             self.active_arrow_button_img.get_rect().size[0] + self.active_bomb_button_img.get_rect().size[0] +
+             self.active_glow_button_img.get_rect().size[0] + self.active_gun_button_img.get_rect().size[0] * 2.6,
+             self.active_gun_button_img.get_rect().size[1])
+        )
         self.choosing_buttons["Arrow"].draw(self.screen)
         self.choosing_buttons["Bomb"].draw(self.screen)
         self.choosing_buttons["Glow"].draw(self.screen)
