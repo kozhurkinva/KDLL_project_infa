@@ -1,9 +1,6 @@
 from game_menus import *
 from game_level import *
 import pygame.mixer
-# import game_objects_creatures as o_c
-# import game_objects_towers as o_t
-# from game_objects_projectiles import global_projectiles
 import pygame
 
 
@@ -26,6 +23,10 @@ class Game:
         self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         self.font_name = pygame.font.get_default_font()
         self.clock = pygame.time.Clock()
+
+        # Звуки
+        self.background_music = pygame.mixer.music.load("angrybirds.mp3")
+        self.screem_sound = pygame.mixer.Sound("takedam1.wav")
 
         # Объект уровня
         self.curr_level = None
@@ -113,4 +114,3 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.display.blit(text_surface, text_rect)
-

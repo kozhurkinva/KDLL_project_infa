@@ -41,7 +41,7 @@ class MainMenu(Menu):
         Отображает меню на экране
         """
         self.run_display = True
-        self.play_main_theme()
+        pygame.mixer.music.play(-1)
         while self.run_display:
             self.game.check_events()
             self.check_input()
@@ -100,13 +100,6 @@ class MainMenu(Menu):
             elif self.state == "Exit":
                 self.game.running, self.game.playing = False, False
             self.run_display = False
-
-    def play_main_theme(self):
-        """
-        Воспроизведение музыки в игре
-        """
-        game_sound = pygame.mixer.music.load("angrybirds.mp3")
-        pygame.mixer.music.play(-1)
 
 
 class LevelsMenu(Menu):
@@ -182,7 +175,7 @@ class VolumeMenu(Menu):
         :param game: объект основного класса Game
         """
         Menu.__init__(self, game)
-        self.volume_state = 0.5
+        self.volume_state = 1.
         self.barx, self.bary = self.mid_w - 200, self.mid_h + 20
 
     def display_menu(self):
@@ -198,6 +191,7 @@ class VolumeMenu(Menu):
             pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 400, 50), 3)
             pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, self.volume_state * 400, 50))
             pygame.mixer.music.set_volume(self.volume_state)
+            self.game.screem_sound.set_volume(self.volume_state)
             self.draw_cursor()
             self.blit_screen()
 
@@ -211,13 +205,9 @@ class VolumeMenu(Menu):
         elif self.game.UP_KEY:
             if self.volume_state < 0.9:
                 self.volume_state += 0.1
-            else:
-                pass
         elif self.game.DOWN_KEY:
             if self.volume_state > 0.1:
                 self.volume_state -= 0.1
-            else:
-                pass
 
 
 class CreditsMenu(Menu):

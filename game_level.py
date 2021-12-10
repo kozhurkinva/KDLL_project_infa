@@ -18,7 +18,6 @@ class Level:
         self.player_health = 20
         self.player_money = 70
         self.opponents = []
-        nents = []
         self.towers = []
         self.allys = [o_c.Blue(200, 200)]
 
@@ -196,6 +195,7 @@ class Level:
                 opp.fight(al)
             if not opp.alive:
                 self.opponents.pop(self.opponents.index(opp))
+                self.game.screem_sound.play()
                 self.player_money += opp.loot
             if opp.finished:
                 self.player_health -= opp.player_damage

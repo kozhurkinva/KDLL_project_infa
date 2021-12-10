@@ -36,8 +36,6 @@ class Creature:
         Функция получения существом урона в количестве dmg. В случае нехватки очков жизни вызывает смерть существа.
         global_projectiles нужен для сохранения бомб, летевших в умершее существо, которые должны остаться
         """
-        pygame.mixer.Sound("takedam1.wav").play()
-        pygame.mixer.Sound("takedam1.wav").stop()
         self.hp -= dmg
         if self.hp <= 0:
             self.die()
