@@ -74,6 +74,9 @@ class Game:
             self.clock.tick(self.FPS)
 
     def set_level(self):
+        """
+        Установка уровня
+        """
         self.curr_level = Level(self, self.level_name, self.display)
         self.playing = True
 

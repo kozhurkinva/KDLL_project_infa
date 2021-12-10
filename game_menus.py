@@ -239,10 +239,17 @@ class CreditsMenu(Menu):
 
 class WinLoseMenu(Menu):
     def __init__(self, game):
+        """
+        Меню для вывода пользователю, побелил он или нет.
+        :param game: обхект основного класса Game
+        """
         Menu.__init__(self, game)
         self.state = False
 
     def display_menu(self):
+        """
+        Отображает меню на экране
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()

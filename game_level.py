@@ -161,6 +161,9 @@ class Level:
             return "No money"
 
     def change_buttons_img(self):
+        """
+        Обработчик изменения изображений кнопок выбора башен
+        """
         if self.player_money < o_t.ArrowTower.cost:
             self.choosing_buttons["Arrow"].image = self.passive_arrow_button_img
         else:
@@ -182,7 +185,9 @@ class Level:
             self.choosing_buttons["Gun"].image = self.active_gun_button_img
 
     def player_health_draw(self):
-        # Отрисовка шкалы здоровья игрока
+        """
+        Отрисовка здоровья игрока
+        """
         pygame.draw.rect(self.screen, (255, 0, 0), (250, 8, self.player_health * 20, 20))
         pygame.draw.rect(self.screen, (255, 255, 255), (250, 8, 400, 20), 3)
 
@@ -193,6 +198,9 @@ class Level:
         self.text_color = (0, 0, 0)
 
     def check_state(self):
+        """
+        Обработчик победы и поражения
+        """
         if self.wave == len(self.spawn_list) and not self.opponents and self.player_health >= 0:
             self.game.playing = False
             self.game.curr_menu = self.game.winlose
