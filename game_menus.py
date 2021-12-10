@@ -213,7 +213,7 @@ class VolumeMenu(Menu):
 class CreditsMenu(Menu):
     def __init__(self, game):
         """
-        Меню валюты или очков.
+        Меню, отображающее авторов
         Методы аналогичны методам MainMenu.
         Позже будет встроено в логику работы программы
         :param game: объект основного класса Game
@@ -232,7 +232,7 @@ class CreditsMenu(Menu):
                 self.run_display = False
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text("Credits", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 20)
-            self.game.draw_text("Made by me", 15, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 10)
+            self.game.draw_text("Made by Tima, Valera, Antoshka and Gera", 15, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 10)
             self.blit_screen()
 
 
