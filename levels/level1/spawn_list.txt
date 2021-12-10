@@ -1,6 +1,14 @@
 5 Warrior alpha 30
 wave
-200 - - 1
+600 - - 1
 wave
-4 Warrior alpha 60
+7 Warrior alpha 30
+wave
+600 - - 1
+wave
+11 Warrior alpha 30
+wave
+600 - - 1
+wave
+6 Warrior alpha 60
 1 HealingMage alpha 30

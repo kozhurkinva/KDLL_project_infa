@@ -19,7 +19,7 @@ class Level:
         self.player_money = 70
         self.opponents = []
         self.towers = []
-        self.allys = [o_c.Blue(200, 200)]
+        self.allys = []
 
         # Для настройки уровня
         self.level = (level.lower()).replace(" ", "")[-1]
