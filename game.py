@@ -25,8 +25,8 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Звуки
-        self.background_music = pygame.mixer.music.load("angrybirds.mp3")
-        self.screem_sound = pygame.mixer.Sound("takedam1.wav")
+        self.background_music = pygame.mixer.music.load("Sound/angrybirds.mp3")
+        self.screem_sound = pygame.mixer.Sound("Sound/takedam1.wav")
 
         # Объект уровня
         self.curr_level = None
