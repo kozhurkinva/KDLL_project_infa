@@ -188,8 +188,8 @@ class VolumeMenu(Menu):
             self.check_input()
             self.game.display.fill((0, 0, 0))
             self.game.draw_text("Volume", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 30)
-            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, 400, 50), 3)
-            pygame.draw.rect(self.game.display, (255, 255, 255), (self.barx, self.bary, self.volume_state * 400, 50))
+            pygame.draw.rect(self.game.display, (255, 255, 255), [self.barx, self.bary, 400, 50], 3)
+            pygame.draw.rect(self.game.display, (255, 255, 255), [self.barx, self.bary, self.volume_state * 400, 50])
             pygame.mixer.music.set_volume(self.volume_state)
             self.game.screem_sound.set_volume(self.volume_state)
             self.draw_cursor()
@@ -232,7 +232,8 @@ class CreditsMenu(Menu):
                 self.run_display = False
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text("Credits", 20, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 20)
-            self.game.draw_text("Made by Tima, Valera, Antoshka and Gera", 15, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 10)
+            self.game.draw_text("Made by Tima, Valera, Antoshka and Gera", 15, self.game.WIDTH / 2,
+                                self.game.HEIGHT / 2 + 10)
             self.blit_screen()
 
 
@@ -252,5 +253,5 @@ class WinLoseMenu(Menu):
             if self.state:
                 self.game.draw_text("Ah Gooood! You Win!!!", 50, self.game.mid_w, self.game.mid_h - 20)
             else:
-                self.game.draw_text("Ah Shit! You Lose!", 50, self.game.mid_w, self.game.mid_h + 10)
+                self.game.draw_text("You Lose!", 50, self.game.mid_w, self.game.mid_h + 10)
             self.blit_screen()

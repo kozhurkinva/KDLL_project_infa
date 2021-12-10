@@ -3,7 +3,7 @@ from game_level import *
 import pygame.mixer
 import pygame
 
-from os import system
+
 class Game:
     def __init__(self):
         """

@@ -1,7 +1,6 @@
 import math
 import os.path as path
 import pygame
-from game_objects_projectiles import global_projectiles
 
 
 class Creature:
@@ -34,7 +33,6 @@ class Creature:
     def take_damage(self, dmg):
         """
         Функция получения существом урона в количестве dmg. В случае нехватки очков жизни вызывает смерть существа.
-        global_projectiles нужен для сохранения бомб, летевших в умершее существо, которые должны остаться
         """
         self.hp -= dmg
         if self.hp <= 0:
